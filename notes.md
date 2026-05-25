@@ -236,3 +236,4 @@ Zem_post(s):  lock; s->value++; Cond_signal(&cond); unlock;
 3. **wait 可能睡，post 从不睡**：post 只在有人等时才唤醒。
 4. **反死锁**：条件信号量在外圈，互斥锁紧贴临界区在内圈；睡觉别攥着锁。
 5. **破除循环等待**：哲学家问题靠改一个人的拿叉顺序打破环。
+[导弹拦截.md](https://github.com/user-attachments/files/28213351/default.md)
