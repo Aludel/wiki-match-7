@@ -96,6 +96,7 @@
   article code.inline{background:var(--accent-soft); color:var(--accent-ink); padding:2px 7px; border-radius:6px; font-size:13.5px; font-family:ui-monospace,"SF Mono",Menlo,Consolas,monospace; font-weight:600;}
   article pre.code{position:relative; background:var(--code-bg); color:var(--code-ink); padding:36px 18px 16px; border-radius:14px; overflow-x:auto; font-size:13.5px; line-height:1.7; margin:18px 0; font-family:ui-monospace,"SF Mono",Menlo,Consolas,monospace; border:1px solid var(--code-line); box-shadow:var(--shadow-sm);}
   article pre.code::before{content:""; position:absolute; top:14px; left:16px; width:11px; height:11px; border-radius:50%; background:#ff5f57; box-shadow:18px 0 0 #febc2e, 36px 0 0 #28c840;}
+  article iframe.embed{width:100%; height:82vh; border:1px solid var(--line); border-radius:14px; box-shadow:var(--shadow-sm); background:#fff; margin:14px 0; display:block;}
   article a{color:var(--accent-ink); text-decoration:none; border-bottom:1.5px solid transparent; transition:.15s;}
   article a:hover{border-bottom-color:var(--accent);}
   article a.wlink{background:var(--accent-soft); padding:1.5px 8px; border-radius:7px; font-weight:600; border-bottom:none;}
@@ -289,7 +290,7 @@ const KEY='myStudyWiki_v1', VIS_KEY='wikiVisits', WALL_KEY='wikiWall';
 const WIKI=(function(){
   let notes={}, current=null, view='note', edTab='vis', editingId=null;
 
-  function load(){ try{ const raw=localStorage.getItem(KEY); if(raw){ notes=JSON.parse(raw); return; } }catch(e){} notes=seed(); persist(); }
+  function load(){ try{ const raw=localStorage.getItem(KEY); if(raw){ notes=JSON.parse(raw); if(!notes['os-sem-interactive']){ const now=new Date().toISOString().slice(0,16).replace('T',' '); notes['os-sem-interactive']={id:'os-sem-interactive',title:'信号量交互式学习指南',category:'操作系统',updated:now,body:"# 信号量交互式学习指南（OSTEP 第31章）\n\n> 下面原样嵌入了《信号量学习指南》，保留全部图示、配色与交互模拟器，渲染与原文件完全一致。若下方未显示，请确认 `信号量学习指南.html` 与本文件在同一文件夹。\n\n@embed 信号量学习指南.html"}; persist(); } return; } }catch(e){} notes=seed(); persist(); }
   function persist(){ try{ localStorage.setItem(KEY,JSON.stringify(notes)); }catch(e){ toast('⚠ 浏览器存储写入失败，建议导出备份'); } }
   function slug(t){ return (t||'').trim().toLowerCase().replace(/\s+/g,'-').replace(/[^\w一-龥\-]/g,'')||('p'+Date.now()); }
   function idByTitle(title){ const t=(title||'').trim(); for(const id in notes){ if(notes[id].title.trim()===t) return id; } return null; }
@@ -315,6 +316,7 @@ const WIKI=(function(){
     while(i<lines.length){
       let ln=lines[i];
       if(ln.indexOf(FENCE)===0){ let buf=[]; i++; while(i<lines.length && lines[i].indexOf(FENCE)!==0){ buf.push(lines[i]); i++; } i++; html+='<pre class="code">'+esc(buf.join('\n'))+'</pre>'; continue; }
+      if(/^@embed\s+/.test(ln)){ const src=ln.replace(/^@embed\s+/,'').trim(); html+='<iframe class="embed" src="'+src.replace(/"/g,'%22')+'" loading="lazy"></iframe>'; i++; continue; }
       let h=ln.match(/^(#{1,3})\s+(.*)$/);
       if(h){ const lv=h[1].length; html+='<h'+lv+'>'+inline(h[2])+'</h'+lv+'>'; i++; continue; }
       if(/^---+$/.test(ln.trim())){ html+='<hr>'; i++; continue; }
@@ -341,6 +343,7 @@ const WIKI=(function(){
       else if(tag==='ol'){ let k=1; n.querySelectorAll(':scope > li').forEach(li=>{ out+=(k++)+'. '+inlineMd(li).trim()+'\n'; }); out+='\n'; }
       else if(tag==='blockquote'){ out+='> '+inlineMd(n).trim().replace(/\n+/g,' ')+'\n\n'; }
       else if(tag==='pre'){ const F=String.fromCharCode(96,96,96); out+=F+'\n'+n.textContent.replace(/\n+$/,'')+'\n'+F+'\n\n'; }
+      else if(tag==='iframe'){ out+='@embed '+(n.getAttribute('src')||'')+'\n\n'; }
       else if(tag==='div'||tag==='p'){ const inner=inlineMd(n).trim(); out+= inner? inner+'\n\n':''; }
       else { const inner=inlineMd(n).trim(); if(inner) out+=inner+'\n\n'; } }); }
     block(root); return out.replace(/\n{3,}/g,'\n\n').trim();
@@ -474,7 +477,8 @@ const WIKI=(function(){
       mk('home','首页','开始',"# 欢迎来到我的学习 Wiki 👋\n\n这是一个**完全属于你**的本地知识库，所有笔记保存在你浏览器里。\n\n## 快速上手\n- 右上角 **＋ 新建** 写笔记（支持**可视化富文本**和 **Markdown** 两种模式）\n- 顶部**强力搜索**，输入即出结果、可上下键选择\n- 📊 查看**活跃度格子图**；🎨 设置**壁纸/外观**；🌙 切换明暗主题\n- 页面互链：[[操作系统：信号量]]\n\n> 先读 [[使用说明]]。"),
       mk('guide','使用说明','开始',"# 使用说明\n\n## 编辑（两种模式）\n点 **＋ 新建** 或 **✎ 编辑**。编辑器有两个标签：\n- **可视化**：像 Word 一样，用工具栏加粗、标题、列表、引用、代码、链接。\n- **Markdown**：直接写源码。两种随时切换，保存的都是 Markdown。\n\n## 搜索\n顶部搜索框全文检索标题与正文，结果带高亮片段，方向键选择、回车打开。\n\n## 活跃度\n点 📊：上面是**本机访问热力图**，下面是**笔记更新热力图**。\n\n## 壁纸 / 外观\n点 🎨：可选预设、图片链接或本地上传壁纸，并调模糊与压暗。右上角 🌙 切换明暗。\n\n## 备份\n清浏览器数据会清空笔记，记得常点 ⬇ 导出备份；换设备点 ⬆ 导入。"),
       mk('md','Markdown 速查','开始',"# Markdown 速查\n\n## 标题\n用 # 号开头（# 到 ###）。\n\n## 强调\n- 两个星号**加粗**\n- 一个星号*斜体*\n- 反引号 `行内代码`\n\n## 列表与引用\n短横线做无序列表；数字加点做有序列表；行首 > 做引用。\n\n## 代码块\n三个反引号包住整段代码。\n\n## 链接\n外链用中括号+圆括号；站内互链用双方括号包标题，如 [[操作系统：信号量]]。\n\n## 表格\n| 列A | 列B |\n| --- | --- |\n| 1 | 2 |"),
-      mk('os-sem','操作系统：信号量','操作系统',"# 操作系统：信号量 (Semaphore)\n\n> 示例笔记。\n\n## 一句话定义\n信号量是一个**带整数值的对象**，配两个原子操作：sem_wait（值减 1，小于 0 就睡）和 sem_post（值加 1，有人睡就唤醒一个）。\n\n## 关键恒等式\n当信号量的值为负时，**它的绝对值 = 正在等待的线程数**。\n\n## 初值速查\n| 用途 | 初值 | 含义 |\n| --- | --- | --- |\n| 作锁（互斥） | 1 | 一个名额 |\n| 作条件变量 | 0 | 没名额，需等别人 post |\n| 生产者 empty | MAX | 初始空位数 |\n| 生产者 full | 0 | 初始没有数据 |")
+      mk('os-sem','操作系统：信号量','操作系统',"# 操作系统：信号量 (Semaphore)\n\n> 示例笔记。\n\n## 一句话定义\n信号量是一个**带整数值的对象**，配两个原子操作：sem_wait（值减 1，小于 0 就睡）和 sem_post（值加 1，有人睡就唤醒一个）。\n\n## 关键恒等式\n当信号量的值为负时，**它的绝对值 = 正在等待的线程数**。\n\n## 初值速查\n| 用途 | 初值 | 含义 |\n| --- | --- | --- |\n| 作锁（互斥） | 1 | 一个名额 |\n| 作条件变量 | 0 | 没名额，需等别人 post |\n| 生产者 empty | MAX | 初始空位数 |\n| 生产者 full | 0 | 初始没有数据 |"),
+      mk('os-sem-interactive','信号量交互式学习指南','操作系统',"# 信号量交互式学习指南（OSTEP 第31章）\n\n> 下面原样嵌入了《信号量学习指南》，保留全部图示、配色与交互模拟器，渲染与原文件完全一致。若下方未显示，请确认 `信号量学习指南.html` 与本文件在同一文件夹。\n\n@embed 信号量学习指南.html")
     ].forEach(n=>data[n.id]=n); return data;
   }
 
