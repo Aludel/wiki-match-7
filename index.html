@@ -4,108 +4,253 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>我的学习 Wiki</title>
+<script>
+  /* 无闪烁主题：在首屏绘制前就设定主题 */
+  (function(){
+    try{
+      var t=localStorage.getItem('wikiTheme');
+      if(!t) t=window.matchMedia&&window.matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';
+      document.documentElement.setAttribute('data-theme',t);
+    }catch(e){ document.documentElement.setAttribute('data-theme','light'); }
+  })();
+</script>
 <style>
-  :root{
-    --bg:#f6f7f9; --panel:#ffffff; --ink:#1f2430; --muted:#64748b;
-    --accent:#4f46e5; --accent-soft:#eef0ff; --line:#e5e7eb; --green:#16a34a;
-    --red:#dc2626; --code-bg:#1e293b; --code-ink:#e2e8f0; --radius:12px;
-    --shadow:0 4px 18px rgba(20,30,60,.08);
+  /* ===================== 主题变量 ===================== */
+  :root[data-theme="light"]{
+    --bg:#f5f6fb; --bg-grad1:#eef1ff; --bg-grad2:#fdf2f8;
+    --panel:#ffffff; --panel-2:#fbfcfe; --panel-soft:#f3f5fb;
+    --ink:#1c2230; --ink-soft:#3a4256; --muted:#6b7488; --faint:#9aa3b5;
+    --accent:#6366f1; --accent-2:#8b5cf6; --accent-ink:#4f46e5; --accent-soft:#eef0ff;
+    --line:#e6e9f2; --line-soft:#eef1f7;
+    --code-bg:#0f172a; --code-ink:#e6edf8; --code-line:#1e293b;
+    --shadow:0 1px 2px rgba(20,30,60,.04), 0 8px 28px rgba(20,30,60,.07);
+    --shadow-sm:0 1px 3px rgba(20,30,60,.07);
+    --green:#16a34a; --red:#e11d48; --ring:rgba(99,102,241,.28);
+  }
+  :root[data-theme="dark"]{
+    --bg:#0c0f16; --bg-grad1:#11162400; --bg-grad2:#0c0f1600;
+    --panel:#141923; --panel-2:#11151e; --panel-soft:#1a2030;
+    --ink:#e8ecf5; --ink-soft:#c2cad8; --muted:#8b95a8; --faint:#6b7488;
+    --accent:#818cf8; --accent-2:#a78bfa; --accent-ink:#a5b0ff; --accent-soft:rgba(129,140,248,.16);
+    --line:#242b39; --line-soft:#1c2230;
+    --code-bg:#0a0d14; --code-ink:#d8e2f2; --code-line:#1c2433;
+    --shadow:0 1px 2px rgba(0,0,0,.4), 0 10px 30px rgba(0,0,0,.35);
+    --shadow-sm:0 1px 3px rgba(0,0,0,.35);
+    --green:#34d399; --red:#fb7185; --ring:rgba(129,140,248,.35);
   }
   *{box-sizing:border-box}
   html,body{height:100%}
   body{
     margin:0; background:var(--bg); color:var(--ink);
-    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;
-    line-height:1.7; font-size:15.5px; display:flex; flex-direction:column;
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;
+    line-height:1.78; font-size:15.5px; display:flex; flex-direction:column;
+    -webkit-font-smoothing:antialiased; text-rendering:optimizeLegibility;
+    transition:background .35s ease, color .35s ease;
   }
+  body::before{
+    content:""; position:fixed; inset:0; z-index:-1; pointer-events:none;
+    background:radial-gradient(900px 500px at 12% -8%, var(--bg-grad1), transparent 60%),
+               radial-gradient(800px 480px at 100% 0%, var(--bg-grad2), transparent 55%);
+    transition:opacity .35s ease;
+  }
+  ::selection{background:var(--accent-soft); color:var(--accent-ink);}
+  /* scrollbars */
+  *::-webkit-scrollbar{width:10px; height:10px;}
+  *::-webkit-scrollbar-thumb{background:var(--line); border-radius:20px; border:2px solid transparent; background-clip:padding-box;}
+  *::-webkit-scrollbar-thumb:hover{background:var(--faint);}
+
+  /* ===================== 顶栏 ===================== */
   header.top{
-    display:flex; align-items:center; gap:14px; padding:10px 18px; background:var(--panel);
-    border-bottom:1px solid var(--line); position:sticky; top:0; z-index:20;
+    display:flex; align-items:center; gap:14px; padding:11px 20px;
+    background:color-mix(in srgb, var(--panel) 86%, transparent);
+    backdrop-filter:saturate(160%) blur(12px); -webkit-backdrop-filter:saturate(160%) blur(12px);
+    border-bottom:1px solid var(--line); position:sticky; top:0; z-index:40;
   }
-  header.top .logo{font-weight:800; font-size:17px; color:var(--accent); white-space:nowrap;}
-  header.top .logo span{color:var(--ink);}
-  header.top .spacer{flex:1}
-  .searchbox{position:relative; flex:1; max-width:420px;}
-  .searchbox input{width:100%; padding:8px 12px 8px 34px; border:1px solid var(--line); border-radius:9px; font-size:14px;}
-  .searchbox::before{content:"\1F50D"; position:absolute; left:10px; top:50%; transform:translateY(-50%); font-size:13px; opacity:.6;}
-  a.editlink{font-size:13.5px; font-weight:600; color:var(--accent); background:var(--accent-soft); padding:8px 13px; border-radius:9px; text-decoration:none; white-space:nowrap;}
-  a.editlink:hover{background:#e0e3ff;}
-  .wrap{display:flex; flex:1; min-height:0;}
+  .menu-btn{display:none; background:none; border:none; cursor:pointer; font-size:20px; color:var(--ink); padding:4px 6px; border-radius:8px;}
+  .menu-btn:hover{background:var(--panel-soft);}
+  .logo{font-weight:800; font-size:17px; letter-spacing:.2px; white-space:nowrap; display:flex; align-items:center; gap:9px;}
+  .logo .mark{
+    width:30px; height:30px; border-radius:9px; display:grid; place-items:center; font-size:16px;
+    background:linear-gradient(135deg,var(--accent),var(--accent-2)); box-shadow:0 4px 12px var(--ring);
+  }
+  .logo .txt{background:linear-gradient(120deg,var(--accent),var(--accent-2)); -webkit-background-clip:text; background-clip:text; color:transparent;}
+  .logo .txt b{color:var(--ink); font-weight:800;}
+  .spacer{flex:1}
+  .searchbox{position:relative; flex:1; max-width:440px;}
+  .searchbox svg{position:absolute; left:12px; top:50%; transform:translateY(-50%); width:16px; height:16px; color:var(--faint);}
+  .searchbox input{
+    width:100%; padding:9px 14px 9px 38px; border:1px solid var(--line); border-radius:11px;
+    font-size:14px; background:var(--panel-2); color:var(--ink); transition:.18s;
+  }
+  .searchbox input::placeholder{color:var(--faint);}
+  .searchbox input:focus{outline:none; border-color:var(--accent); box-shadow:0 0 0 4px var(--ring); background:var(--panel);}
+  .iconbtn{
+    width:38px; height:38px; flex:0 0 38px; border:1px solid var(--line); border-radius:11px; background:var(--panel-2);
+    cursor:pointer; display:grid; place-items:center; font-size:16px; color:var(--ink); transition:.18s;
+  }
+  .iconbtn:hover{border-color:var(--accent); color:var(--accent); transform:translateY(-1px); box-shadow:var(--shadow-sm);}
+  a.editlink{
+    font-size:13.5px; font-weight:650; color:#fff; text-decoration:none; white-space:nowrap;
+    padding:9px 15px; border-radius:11px; background:linear-gradient(135deg,var(--accent),var(--accent-2));
+    box-shadow:0 4px 14px var(--ring); transition:.18s;
+  }
+  a.editlink:hover{filter:brightness(1.06); transform:translateY(-1px);}
+
+  /* ===================== 布局 ===================== */
+  .wrap{display:flex; flex:1; min-height:0; position:relative;}
+  .scrim{display:none; position:fixed; inset:0; background:rgba(8,10,18,.5); z-index:29;}
   nav.side{
-    width:268px; flex:0 0 268px; background:var(--panel); border-right:1px solid var(--line);
-    overflow-y:auto; padding:14px 10px 40px;
+    width:280px; flex:0 0 280px; overflow-y:auto; padding:18px 12px 50px;
+    border-right:1px solid var(--line); background:var(--panel-2);
   }
-  nav.side .cat{font-size:12px; letter-spacing:.06em; color:var(--muted); text-transform:uppercase; margin:16px 10px 4px; font-weight:700;}
+  nav.side .cat{
+    font-size:11.5px; letter-spacing:.09em; color:var(--faint); text-transform:uppercase;
+    margin:18px 12px 6px; font-weight:800; display:flex; align-items:center; gap:7px;
+  }
+  nav.side .cat::before{content:""; width:6px; height:6px; border-radius:50%; background:linear-gradient(135deg,var(--accent),var(--accent-2));}
   nav.side a.item{
-    display:flex; align-items:center; gap:8px; padding:7px 12px; color:var(--ink); text-decoration:none;
-    border-radius:8px; font-size:14px; cursor:pointer; transition:.12s;
+    position:relative; display:flex; align-items:center; gap:9px; padding:8px 13px; margin:2px 0;
+    color:var(--ink-soft); text-decoration:none; border-radius:10px; font-size:14px; cursor:pointer;
+    transition:.15s; border:1px solid transparent;
   }
-  nav.side a.item:hover{background:var(--accent-soft);}
-  nav.side a.item.active{background:var(--accent); color:#fff;}
-  nav.side a.item .dot{font-size:11px; opacity:.5;}
-  nav.side .empty{color:var(--muted); font-size:13px; padding:10px 12px;}
-  main.content{flex:1; min-width:0; overflow-y:auto; padding:30px 46px 90px;}
-  article{max-width:820px;}
-  .meta{color:var(--muted); font-size:13px; margin-bottom:6px;}
-  .crumb{color:var(--muted); font-size:13px;}
-  .crumb b{color:var(--accent);}
-  article h1{font-size:28px; margin:6px 0 14px; line-height:1.3;}
-  article h2{font-size:21px; margin:26px 0 8px; padding-bottom:6px; border-bottom:1px solid var(--line);}
-  article h3{font-size:17px; margin:20px 0 6px; color:var(--accent);}
-  article p{margin:11px 0;}
-  article ul,article ol{padding-left:24px; margin:10px 0;}
-  article li{margin:4px 0;}
-  article blockquote{margin:14px 0; padding:8px 16px; background:var(--accent-soft); border-left:4px solid var(--accent); border-radius:8px; color:#334155;}
-  article code.inline{background:#eef0ff; color:var(--accent); padding:1px 6px; border-radius:5px; font-size:14px; font-family:ui-monospace,Menlo,Consolas,monospace;}
-  article pre.code{background:var(--code-bg); color:var(--code-ink); padding:14px 16px; border-radius:10px; overflow-x:auto; font-size:13.5px; line-height:1.6; font-family:ui-monospace,Menlo,Consolas,monospace;}
-  article a{color:var(--accent); text-decoration:none; border-bottom:1px solid transparent;}
+  nav.side a.item .dot{width:6px; height:6px; border-radius:50%; background:var(--faint); flex:0 0 6px; transition:.15s;}
+  nav.side a.item:hover{background:var(--panel-soft); color:var(--ink);}
+  nav.side a.item:hover .dot{background:var(--accent);}
+  nav.side a.item.active{
+    background:var(--accent-soft); color:var(--accent-ink); font-weight:650;
+    border-color:color-mix(in srgb, var(--accent) 22%, transparent);
+  }
+  nav.side a.item.active .dot{background:linear-gradient(135deg,var(--accent),var(--accent-2)); box-shadow:0 0 0 3px var(--ring);}
+  nav.side .empty{color:var(--muted); font-size:13px; padding:12px 14px;}
+
+  main.content{flex:1; min-width:0; overflow-y:auto; padding:38px 52px 110px; scroll-behavior:smooth;}
+
+  /* ===================== 文章 ===================== */
+  article{max-width:800px; margin:0 auto; animation:fade .4s ease;}
+  @keyframes fade{from{opacity:0; transform:translateY(6px);} to{opacity:1; transform:none;}}
+  .crumb{color:var(--muted); font-size:13px; margin-bottom:10px; display:flex; align-items:center; gap:6px;}
+  .crumb .chip{background:var(--accent-soft); color:var(--accent-ink); padding:2px 10px; border-radius:999px; font-weight:650;}
+  article h1{font-size:30px; font-weight:820; margin:4px 0 8px; line-height:1.28; letter-spacing:-.01em;}
+  .meta{color:var(--faint); font-size:12.5px; margin-bottom:22px;}
+  article h2{
+    font-size:21px; font-weight:760; margin:34px 0 12px; padding-bottom:8px;
+    border-bottom:1px solid var(--line); display:flex; align-items:center; gap:10px;
+  }
+  article h2::before{content:""; width:4px; height:18px; border-radius:3px; background:linear-gradient(180deg,var(--accent),var(--accent-2));}
+  article h3{font-size:17px; font-weight:720; margin:24px 0 8px; color:var(--accent-ink);}
+  article p{margin:12px 0;}
+  article ul,article ol{padding-left:22px; margin:12px 0;}
+  article li{margin:6px 0;}
+  article ul li::marker{color:var(--accent);}
+  article ol li::marker{color:var(--accent); font-weight:700;}
+  article blockquote{
+    margin:18px 0; padding:14px 18px 14px 20px; position:relative;
+    background:var(--accent-soft); border-radius:0 12px 12px 0; color:var(--ink-soft);
+    border-left:4px solid var(--accent);
+  }
+  article blockquote p{margin:4px 0;}
+  article code.inline{
+    background:var(--accent-soft); color:var(--accent-ink); padding:2px 7px; border-radius:6px;
+    font-size:13.5px; font-family:ui-monospace,"SF Mono",Menlo,Consolas,monospace; font-weight:600;
+  }
+  article pre.code{
+    position:relative; background:var(--code-bg); color:var(--code-ink); padding:36px 18px 16px;
+    border-radius:14px; overflow-x:auto; font-size:13.5px; line-height:1.7; margin:18px 0;
+    font-family:ui-monospace,"SF Mono",Menlo,Consolas,monospace; border:1px solid var(--code-line);
+    box-shadow:var(--shadow-sm);
+  }
+  article pre.code::before{
+    content:""; position:absolute; top:14px; left:16px; width:11px; height:11px; border-radius:50%;
+    background:#ff5f57; box-shadow:18px 0 0 #febc2e, 36px 0 0 #28c840;
+  }
+  article a{color:var(--accent-ink); text-decoration:none; border-bottom:1.5px solid transparent; transition:.15s;}
   article a:hover{border-bottom-color:var(--accent);}
-  article a.wlink{background:var(--accent-soft); padding:1px 6px; border-radius:5px; font-weight:600;}
-  article a.wlink.missing{background:#fef2f2; color:var(--red);}
-  article hr{border:none; border-top:1px dashed var(--line); margin:24px 0;}
-  article table{border-collapse:collapse; width:100%; margin:14px 0; font-size:14px;}
-  article th{background:var(--accent-soft); color:var(--accent); padding:7px 10px; text-align:left; border:1px solid var(--line);}
-  article td{padding:6px 10px; border:1px solid var(--line);}
-  .backlinks{margin-top:40px; padding-top:16px; border-top:1px solid var(--line);}
-  .backlinks h3{font-size:14px; color:var(--muted); margin:0 0 8px;}
-  .backlinks a{display:inline-block; margin:0 8px 6px 0; font-size:13.5px; color:var(--accent); text-decoration:none;}
-  .notice{max-width:680px; margin:40px auto; padding:22px 24px; background:#fffbeb; border:1px solid #fcd34d; border-radius:12px; color:#854d0e; line-height:1.8;}
-  .notice b{color:#92400e;}
-  .notice code{background:#fef3c7; padding:1px 6px; border-radius:5px;}
-  @media(max-width:820px){
-    nav.side{display:none;} main.content{padding:20px 16px 70px;}
-    header.top{flex-wrap:wrap;}
+  article a.wlink{
+    background:var(--accent-soft); padding:1.5px 8px; border-radius:7px; font-weight:600; border-bottom:none;
+    transition:.15s;
+  }
+  article a.wlink:hover{filter:brightness(.97); box-shadow:0 0 0 3px var(--ring);}
+  article a.wlink.missing{background:color-mix(in srgb,var(--red) 12%,transparent); color:var(--red);}
+  article hr{border:none; border-top:1px dashed var(--line); margin:28px 0;}
+  article table{border-collapse:separate; border-spacing:0; width:100%; margin:18px 0; font-size:14px; border:1px solid var(--line); border-radius:12px; overflow:hidden; box-shadow:var(--shadow-sm);}
+  article th{background:var(--accent-soft); color:var(--accent-ink); padding:10px 14px; text-align:left; font-weight:700; border-bottom:1px solid var(--line);}
+  article td{padding:9px 14px; border-bottom:1px solid var(--line-soft);}
+  article tbody tr:nth-child(even){background:var(--panel-soft);}
+  article tbody tr:last-child td{border-bottom:none;}
+  article tbody tr:hover{background:var(--accent-soft);}
+
+  .backlinks{margin-top:46px; padding-top:20px; border-top:1px solid var(--line);}
+  .backlinks h3{font-size:13px; color:var(--muted); margin:0 0 10px; font-weight:700; letter-spacing:.02em;}
+  .backlinks a{
+    display:inline-flex; align-items:center; gap:6px; margin:0 8px 8px 0; font-size:13px; color:var(--ink-soft);
+    text-decoration:none; background:var(--panel); border:1px solid var(--line); padding:6px 12px; border-radius:999px;
+    transition:.15s; box-shadow:var(--shadow-sm);
+  }
+  .backlinks a::before{content:"🔗"; font-size:11px;}
+  .backlinks a:hover{border-color:var(--accent); color:var(--accent-ink); transform:translateY(-1px);}
+
+  /* 加载 / 提示 */
+  .loading{display:flex; flex-direction:column; align-items:center; gap:14px; color:var(--muted); margin:90px auto; font-size:14px;}
+  .spinner{width:34px; height:34px; border:3px solid var(--line); border-top-color:var(--accent); border-radius:50%; animation:spin .8s linear infinite;}
+  @keyframes spin{to{transform:rotate(360deg);}}
+  .notice{
+    max-width:680px; margin:50px auto; padding:24px 26px; background:var(--panel); border:1px solid var(--line);
+    border-radius:16px; color:var(--ink-soft); line-height:1.85; box-shadow:var(--shadow);
+  }
+  .notice .ic{font-size:30px;} .notice b{color:var(--ink);}
+  .notice code{background:var(--accent-soft); color:var(--accent-ink); padding:2px 7px; border-radius:6px; font-family:ui-monospace,monospace;}
+
+  @media(max-width:880px){
+    main.content{padding:24px 18px 80px;}
+    nav.side{
+      position:fixed; top:0; left:0; bottom:0; z-index:30; transform:translateX(-104%);
+      transition:transform .28s cubic-bezier(.4,0,.2,1); box-shadow:var(--shadow);
+    }
+    .wrap.open nav.side{transform:none;}
+    .wrap.open .scrim{display:block;}
+    .menu-btn{display:grid;}
+    .searchbox{max-width:none;}
+    article h1{font-size:25px;}
+    .editlink{padding:9px 12px;}
   }
 </style>
 </head>
 <body>
 <header class="top">
-  <div class="logo">📚 我的学习 <span>Wiki</span></div>
-  <div class="searchbox"><input id="search" type="text" placeholder="搜索标题或内容…" oninput="WIKI.search(this.value)"></div>
+  <button class="menu-btn" id="menuBtn" aria-label="菜单" onclick="WIKI.toggleNav()">☰</button>
+  <div class="logo"><span class="mark">📚</span><span class="txt">我的学习 <b>Wiki</b></span></div>
+  <div class="searchbox">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
+    <input id="search" type="text" placeholder="搜索标题或内容…" oninput="WIKI.search(this.value)">
+  </div>
   <div class="spacer"></div>
+  <button class="iconbtn" id="themeBtn" aria-label="切换主题" title="切换明暗主题" onclick="WIKI.toggleTheme()">🌙</button>
   <a class="editlink" id="editLink" href="#" onclick="WIKI.edit();return false;">✎ 编辑内容</a>
 </header>
 
-<div class="wrap">
+<div class="wrap" id="wrap">
+  <div class="scrim" onclick="WIKI.toggleNav(false)"></div>
   <nav class="side" id="sidebar"></nav>
   <main class="content">
-    <article id="reader">
-      <div class="crumb" id="crumb"></div>
-      <h1 id="pgTitle"></h1>
-      <div class="meta" id="pgMeta"></div>
-      <div id="pgBody"></div>
-      <div class="backlinks" id="backlinks"></div>
-    </article>
+    <div id="reader-shell">
+      <div class="loading" id="loading"><div class="spinner"></div><div>正在加载内容…</div></div>
+      <article id="reader" style="display:none">
+        <div class="crumb" id="crumb"></div>
+        <h1 id="pgTitle"></h1>
+        <div class="meta" id="pgMeta"></div>
+        <div id="pgBody"></div>
+        <div class="backlinks" id="backlinks"></div>
+      </article>
+    </div>
   </main>
 </div>
 
 <script>
 /* ============================================================
-   配置：部署到 GitHub 后，把下面这行的网址改成你仓库里
-   notes.md 的「编辑页」地址，例如：
+   配置：部署到 GitHub 后，把下面这行改成你仓库里 notes.md
+   的「编辑页」地址，例如：
    https://github.com/你的用户名/仓库名/edit/main/notes.md
-   填好后，右上角「✎ 编辑内容」就能一键跳到编辑页。
-   先留空也没关系，点它会显示操作提示。
+   填好后右上角「✎ 编辑内容」就能一键跳到编辑页。留空也行。
    ============================================================ */
 const EDIT_URL = "";
 
@@ -113,7 +258,7 @@ const WIKI = (function(){
   let notes = {};
   let current = null;
 
-  /* ---------- 解析 notes.md（按 ::: 分节） ---------- */
+  /* ---------- 解析 notes.md（按 ::: 分节，代码块内不解析） ---------- */
   function parse(text){
     const out={};
     const lines=text.replace(/\r/g,'').split('\n');
@@ -122,7 +267,7 @@ const WIKI = (function(){
     const flush=()=>{ if(cur){ cur.body=buf.join('\n').trim(); out[cur.id]=cur; } };
     const hdr=/^:::\s*(.+?)\s*\|\s*(.+?)\s*\|\s*(.+?)\s*$/;
     for(const ln of lines){
-      if(ln.indexOf(FENCE)===0){ inFence=!inFence; if(cur) buf.push(ln); continue; }  // 代码块内不解析 :::
+      if(ln.indexOf(FENCE)===0){ inFence=!inFence; if(cur) buf.push(ln); continue; }
       const m = inFence ? null : ln.match(hdr);
       if(m){ flush(); cur={id:m[1].trim(), title:m[2].trim(), category:m[3].trim()}; buf=[]; }
       else if(cur){ buf.push(ln); }
@@ -137,7 +282,7 @@ const WIKI = (function(){
     return null;
   }
 
-  /* ---------- Markdown 渲染（无占位符，按代码片段切分） ---------- */
+  /* ---------- Markdown 渲染 ---------- */
   function esc(s){ return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
   function inline(s){
     const BT=String.fromCharCode(96);
@@ -223,7 +368,7 @@ const WIKI = (function(){
     keys.forEach(c=>{
       html+='<div class="cat">'+escAttr(c)+'</div>';
       cats[c].forEach(n=>{
-        html+='<a class="item'+(n.id===current?' active':'')+'" onclick="WIKI.open(\''+n.id+'\')"><span class="dot">●</span>'+escAttr(n.title)+'</a>';
+        html+='<a class="item'+(n.id===current?' active':'')+'" onclick="WIKI.open(\''+n.id+'\')"><span class="dot"></span>'+escAttr(n.title)+'</a>';
       });
     });
     sb.innerHTML=html;
@@ -232,7 +377,9 @@ const WIKI = (function(){
     if(!notes[id]) return;
     current=id;
     const n=notes[id];
-    document.getElementById('crumb').innerHTML='<b>'+escAttr(n.category||'未分类')+'</b> ／ '+escAttr(n.title);
+    document.getElementById('loading').style.display='none';
+    document.getElementById('reader').style.display='';
+    document.getElementById('crumb').innerHTML='<span class="chip">'+escAttr(n.category||'未分类')+'</span> ／ '+escAttr(n.title);
     document.getElementById('pgTitle').textContent=n.title;
     document.getElementById('pgMeta').textContent='';
     document.getElementById('pgBody').innerHTML=render(n.body);
@@ -240,26 +387,48 @@ const WIKI = (function(){
     renderSidebar(document.getElementById('search').value.trim());
     document.querySelector('main.content').scrollTop=0;
     if(history && history.replaceState) history.replaceState(null,'','#'+encodeURIComponent(id));
+    toggleNav(false);
   }
   function renderBacklinks(id){
     const title=notes[id].title.trim();
     const refs=Object.values(notes).filter(n=>n.id!==id && new RegExp('\\[\\[\\s*'+title.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')+'\\s*\\]\\]').test(n.body||''));
     const box=document.getElementById('backlinks');
     if(refs.length===0){ box.innerHTML=''; return; }
-    box.innerHTML='<h3>🔗 链接到本页的笔记</h3>'+refs.map(n=>'<a href="#" onclick="WIKI.open(\''+n.id+'\');return false;">'+escAttr(n.title)+'</a>').join('');
+    box.innerHTML='<h3>链接到本页的笔记</h3>'+refs.map(n=>'<a href="#" onclick="WIKI.open(\''+n.id+'\');return false;">'+escAttr(n.title)+'</a>').join('');
   }
   function goByTitle(t){ const id=idByTitle(t); if(id) open(id); }
   function search(v){ renderSidebar(v.trim()); }
   function edit(){
     if(EDIT_URL){ window.open(EDIT_URL,'_blank','noopener'); }
-    else { alert('编辑方法：到你的 GitHub 仓库打开 notes.md，点铅笔图标在线编辑后 Commit。\n\n（提示：把本文件顶部的 EDIT_URL 设成你的 notes.md 编辑地址后，这个按钮就能一键跳转。）'); }
+    else { alert('编辑方法：到你的 GitHub 仓库打开 notes.md，点铅笔图标在线编辑后 Commit。\n\n（把本文件顶部的 EDIT_URL 设成你的 notes.md 编辑地址后，这个按钮就能一键跳转。）'); }
   }
 
-  /* ---------- 启动：加载 notes.md ---------- */
+  /* ---------- 主题 ---------- */
+  function applyThemeIcon(){
+    const t=document.documentElement.getAttribute('data-theme');
+    document.getElementById('themeBtn').textContent = (t==='dark') ? '☀️' : '🌙';
+  }
+  function toggleTheme(){
+    const cur=document.documentElement.getAttribute('data-theme')==='dark'?'light':'dark';
+    document.documentElement.setAttribute('data-theme',cur);
+    try{ localStorage.setItem('wikiTheme',cur); }catch(e){}
+    applyThemeIcon();
+  }
+  /* ---------- 移动端侧栏 ---------- */
+  function toggleNav(force){
+    const w=document.getElementById('wrap');
+    if(force===false){ w.classList.remove('open'); return; }
+    if(force===true){ w.classList.add('open'); return; }
+    w.classList.toggle('open');
+  }
+
+  /* ---------- 启动 ---------- */
   function showError(msg){
-    document.querySelector('main.content').innerHTML='<div class="notice">'+msg+'</div>';
+    document.getElementById('loading').style.display='none';
+    document.querySelector('main.content').innerHTML='<div class="notice"><div class="ic">📡</div>'+msg+'</div>';
   }
   function start(){
+    applyThemeIcon();
     fetch('notes.md?_='+Date.now())
       .then(r=>{ if(!r.ok) throw new Error('HTTP '+r.status); return r.text(); })
       .then(txt=>{
@@ -267,20 +436,19 @@ const WIKI = (function(){
         const ids=Object.keys(notes);
         if(ids.length===0){ showError('<b>notes.md 是空的或格式不对。</b><br>请检查每篇笔记是否以 <code>::: id | 标题 | 分类</code> 开头。'); return; }
         renderSidebar('');
-        // 支持用 #id 直接打开某页
         const hash=decodeURIComponent((location.hash||'').replace(/^#/,''));
         open(notes[hash]?hash:(notes['home']?'home':ids[0]));
       })
       .catch(err=>{
         showError('<b>无法加载内容文件 notes.md。</b><br><br>'+
           '如果你是<b>直接双击本地的 index.html</b> 打开的，浏览器出于安全限制不允许读取本地文件，这是正常现象。<br><br>'+
-          '✅ 正确用法：把 <code>index.html</code> 和 <code>notes.md</code> 一起上传到 GitHub Pages，再通过<b>网址</b>访问，就能正常显示。<br><br>'+
-          '（如需在本地预览，可在该文件夹运行一个本地服务器，例如 <code>python -m http.server</code>，再打开 http://localhost:8000 ）<br><br>'+
-          '<span style="color:#92400e;font-size:13px">技术细节：'+escAttr(String(err.message||err))+'</span>');
+          '✅ 正确用法：把 <code>index.html</code> 和 <code>notes.md</code> 一起上传到 GitHub Pages，再通过<b>网址</b>访问就能正常显示。<br><br>'+
+          '（本地预览可在该文件夹运行 <code>python -m http.server</code> 再打开 http://localhost:8000 ）<br><br>'+
+          '<span style="color:var(--muted);font-size:13px">技术细节：'+escAttr(String(err.message||err))+'</span>');
       });
   }
 
-  return { open, goByTitle, search, edit, start };
+  return { open, goByTitle, search, edit, start, toggleTheme, toggleNav };
 })();
 
 document.addEventListener('DOMContentLoaded', WIKI.start);
