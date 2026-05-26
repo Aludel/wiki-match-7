@@ -66,7 +66,10 @@
   .btn-primary{font-size:13.5px; font-weight:650; color:#fff; padding:9px 15px; border-radius:11px; border:none; cursor:pointer; background:linear-gradient(135deg,var(--accent),var(--accent-2)); box-shadow:0 4px 14px var(--ring); transition:.18s; white-space:nowrap;}
   .btn-primary:hover{filter:brightness(1.06); transform:translateY(-1px);}
 
+  .sidebar-toggle{flex:0 0 38px;}
   .wrap{display:flex; flex:1; min-height:0; position:relative;}
+  nav.side{transition:width .24s cubic-bezier(.4,0,.2,1), flex-basis .24s cubic-bezier(.4,0,.2,1), padding .24s, opacity .2s;}
+  .wrap.nav-hidden nav.side{width:0; flex-basis:0; padding-left:0; padding-right:0; opacity:0; overflow:hidden; border-right:none; pointer-events:none;}
   .scrim{display:none; position:fixed; inset:0; background:rgba(8,10,18,.5); z-index:29;}
   nav.side{width:280px; flex:0 0 280px; overflow-y:auto; padding:18px 12px 50px; border-right:1px solid var(--line); background:color-mix(in srgb,var(--panel-2) 92%, transparent);}
   nav.side .cat{font-size:11.5px; letter-spacing:.09em; color:var(--faint); text-transform:uppercase; margin:18px 12px 6px; font-weight:800; display:flex; align-items:center; gap:7px;}
@@ -89,6 +92,10 @@
   article h2{font-size:21px; font-weight:760; margin:34px 0 12px; padding-bottom:8px; border-bottom:1px solid var(--line); display:flex; align-items:center; gap:10px;}
   article h2::before{content:""; width:4px; height:18px; border-radius:3px; background:linear-gradient(180deg,var(--accent),var(--accent-2));}
   article h3{font-size:17px; font-weight:720; margin:24px 0 8px; color:var(--accent-ink);}
+  article h4{font-size:15.5px; font-weight:720; margin:20px 0 6px; color:var(--ink); display:flex; align-items:center; gap:7px;}
+  article h4::before{content:""; width:7px; height:7px; border-radius:2px; background:var(--accent-2); transform:rotate(45deg);}
+  article h5{font-size:14px; font-weight:740; margin:16px 0 5px; color:var(--ink-soft); text-transform:none; letter-spacing:.01em;}
+  article h6{font-size:13px; font-weight:700; margin:14px 0 4px; color:var(--muted); text-transform:uppercase; letter-spacing:.06em;}
   article p{margin:12px 0;} article ul,article ol{padding-left:22px; margin:12px 0;} article li{margin:6px 0;}
   article ul li::marker{color:var(--accent);} article ol li::marker{color:var(--accent); font-weight:700;}
   article blockquote{margin:18px 0; padding:14px 18px 14px 20px; background:var(--accent-soft); border-radius:0 12px 12px 0; color:var(--ink-soft); border-left:4px solid var(--accent);}
@@ -96,7 +103,8 @@
   article code.inline{background:var(--accent-soft); color:var(--accent-ink); padding:2px 7px; border-radius:6px; font-size:13.5px; font-family:ui-monospace,"SF Mono",Menlo,Consolas,monospace; font-weight:600;}
   article pre.code{position:relative; background:var(--code-bg); color:var(--code-ink); padding:36px 18px 16px; border-radius:14px; overflow-x:auto; font-size:13.5px; line-height:1.7; margin:18px 0; font-family:ui-monospace,"SF Mono",Menlo,Consolas,monospace; border:1px solid var(--code-line); box-shadow:var(--shadow-sm);}
   article pre.code::before{content:""; position:absolute; top:14px; left:16px; width:11px; height:11px; border-radius:50%; background:#ff5f57; box-shadow:18px 0 0 #febc2e, 36px 0 0 #28c840;}
-  article iframe.embed{width:100%; height:82vh; border:1px solid var(--line); border-radius:14px; box-shadow:var(--shadow-sm); background:#fff; margin:14px 0; display:block;}
+  article iframe.embed{width:100%; min-height:200px; border:none; border-radius:0; box-shadow:none; background:transparent; margin:10px 0; display:block;}
+  article.embed-page{max-width:100%;}
   article a{color:var(--accent-ink); text-decoration:none; border-bottom:1.5px solid transparent; transition:.15s;}
   article a:hover{border-bottom-color:var(--accent);}
   article a.wlink{background:var(--accent-soft); padding:1.5px 8px; border-radius:7px; font-weight:600; border-bottom:none;}
@@ -154,7 +162,9 @@
 
   .modal{position:fixed; inset:0; background:rgba(8,10,18,.55); z-index:80; display:none; padding:3vh 2vw; backdrop-filter:blur(2px);}
   .modal.show{display:flex;}
-  .editor{margin:auto; width:100%; max-width:900px; max-height:94vh; background:var(--panel); border:1px solid var(--line); border-radius:18px; box-shadow:var(--shadow); display:flex; flex-direction:column; overflow:hidden;}
+  .editor{margin:auto; width:min(1100px,94vw); height:88vh; min-width:360px; min-height:320px; max-width:97vw; max-height:96vh; background:var(--panel); border:1px solid var(--line); border-radius:18px; box-shadow:var(--shadow); display:flex; flex-direction:column; overflow:hidden; resize:both;}
+  .editor.max{width:97vw !important; height:96vh !important;}
+  .editor .epane{flex:1 1 auto; min-height:0;}
   .editor .eh{display:flex; align-items:center; gap:10px; padding:14px 18px; border-bottom:1px solid var(--line); flex-wrap:wrap;}
   .editor .eh input.t{flex:1; min-width:180px; padding:9px 12px; border:1px solid var(--line); border-radius:10px; font-size:16px; font-weight:700; background:var(--panel-2); color:var(--ink);}
   .editor .eh input.c{width:150px; padding:9px 12px; border:1px solid var(--line); border-radius:10px; font-size:13px; background:var(--panel-2); color:var(--ink);}
@@ -168,6 +178,7 @@
   .epane{flex:1; overflow:auto; padding:18px 22px;}
   .wysiwyg{min-height:300px; outline:none; line-height:1.75; font-size:15px;}
   .wysiwyg h1{font-size:24px;} .wysiwyg h2{font-size:19px;} .wysiwyg h3{font-size:16px; color:var(--accent-ink);}
+  .wysiwyg h4{font-size:15px; font-weight:720;} .wysiwyg h5{font-size:14px; font-weight:740; color:var(--ink-soft);} .wysiwyg h6{font-size:13px; font-weight:700; color:var(--muted); text-transform:uppercase; letter-spacing:.05em;}
   .wysiwyg pre{background:var(--code-bg); color:var(--code-ink); padding:12px 14px; border-radius:10px; font-family:ui-monospace,monospace; font-size:13px; overflow-x:auto;}
   .wysiwyg blockquote{border-left:3px solid var(--accent); padding-left:12px; color:var(--ink-soft); margin:10px 0;}
   .wysiwyg code{background:var(--accent-soft); color:var(--accent-ink); padding:1px 6px; border-radius:5px; font-family:ui-monospace,monospace;}
@@ -179,21 +190,72 @@
   .btn-soft{font-size:13.5px; font-weight:600; padding:9px 14px; border-radius:10px; background:var(--accent-soft); color:var(--accent-ink); border:none; cursor:pointer;}
   .btn-ghost{font-size:13.5px; font-weight:600; padding:9px 14px; border-radius:10px; background:var(--panel-soft); color:var(--muted); border:1px solid var(--line); cursor:pointer;} .btn-ghost:hover{color:var(--ink);}
   .btn-danger{font-size:13px; font-weight:600; padding:9px 13px; border-radius:10px; background:var(--red-soft); color:var(--red); border:none; cursor:pointer;}
+  .crop-wrap{margin:auto; background:var(--panel); border:1px solid var(--line); border-radius:18px; box-shadow:var(--shadow); padding:16px 18px; display:flex; flex-direction:column; gap:12px; max-width:96vw; max-height:96vh;}
+  .crop-head{display:flex; align-items:center; gap:10px;}
+  .crop-hint{font-size:12.5px; color:var(--muted); margin-top:-4px;}
+  .crop-stage{position:relative; align-self:center; line-height:0; overflow:hidden; border-radius:10px; touch-action:none; user-select:none;}
+  .crop-stage img{display:block; max-width:86vw; max-height:70vh; -webkit-user-drag:none; user-select:none;}
+  .crop-box{position:absolute; left:0; top:0; border:2px solid #fff; box-shadow:0 0 0 9999px rgba(8,10,18,.55); cursor:move; box-sizing:border-box; touch-action:none;}
+  .crop-h{position:absolute; width:15px; height:15px; background:#fff; border:1.5px solid var(--accent); border-radius:4px; box-shadow:0 1px 3px rgba(0,0,0,.4);}
+  .crop-h.nw{left:-8px; top:-8px; cursor:nwse-resize;} .crop-h.ne{right:-8px; top:-8px; cursor:nesw-resize;}
+  .crop-h.sw{left:-8px; bottom:-8px; cursor:nesw-resize;} .crop-h.se{right:-8px; bottom:-8px; cursor:nwse-resize;}
+  .crop-foot{display:flex; gap:10px; align-items:center; flex-wrap:wrap;}
+  .side-tools{display:flex; align-items:center; gap:4px; padding:2px 10px 8px; margin:0 2px 4px; border-bottom:1px solid var(--line-soft);}
+  .side-title{font-size:11.5px; letter-spacing:.09em; color:var(--faint); text-transform:uppercase; font-weight:800; flex:1;}
+  .side-mini{border:1px solid var(--line); background:var(--panel-2); color:var(--ink-soft); border-radius:7px; font-size:11px; padding:3px 6px; cursor:pointer; line-height:1;}
+  .side-mini:hover{border-color:var(--accent); color:var(--accent);}
+  .tree-row{position:relative; display:flex; align-items:center; gap:5px; padding:6px 8px; margin:1px 0; border-radius:9px; cursor:pointer; font-size:13.5px; color:var(--ink-soft); border:1px solid transparent; user-select:none;}
+  .tree-row:hover{background:var(--panel-soft);}
+  .tree-row.folder{font-weight:650; color:var(--ink);}
+  .tree-row.note .dot{width:6px; height:6px; border-radius:50%; background:var(--faint); flex:0 0 6px;}
+  .tree-row.note:hover .dot{background:var(--accent);}
+  .tree-row.note.active{background:var(--accent-soft); color:var(--accent-ink); font-weight:650; border-color:color-mix(in srgb,var(--accent) 22%,transparent);}
+  .tree-row.note.active .dot{background:linear-gradient(135deg,var(--accent),var(--accent-2)); box-shadow:0 0 0 3px var(--ring);}
+  .tree-row .caret{flex:0 0 14px; width:14px; text-align:center; font-size:10px; color:var(--muted); transition:transform .15s;}
+  .tree-row.collapsed .caret{transform:rotate(-90deg);}
+  .tree-row .tlabel{flex:1; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;}
+  .tree-row .tcount{font-size:10.5px; color:var(--faint); background:var(--panel-soft); border-radius:999px; padding:0 7px;}
+  .tree-row .tacts{display:none; gap:2px;}
+  .tree-row:hover .tacts{display:flex;}
+  .tree-row .tacts button{border:none; background:none; cursor:pointer; font-size:11px; padding:2px 3px; border-radius:5px; color:var(--muted);}
+  .tree-row .tacts button:hover{background:var(--accent-soft); color:var(--accent-ink);}
+  .tree-row.drop-target{background:var(--accent-soft); border-color:var(--accent); box-shadow:0 0 0 2px var(--ring);}
+  #treeRoot.drop-root{outline:2px dashed var(--accent); outline-offset:-4px; border-radius:10px;}
+  .tree-children{overflow:hidden;}
+  .tree-children.hidden{display:none;}
+  .ai-field{margin-bottom:14px;} .ai-field label{display:block; font-size:13px; font-weight:650; color:var(--ink-soft); margin-bottom:6px;}
+  .ai-field input,.ai-field select,.ai-field textarea{width:100%; padding:9px 12px; border:1px solid var(--line); border-radius:9px; background:var(--panel-2); color:var(--ink); font-size:13.5px; font-family:inherit;}
+  .ai-field input:focus,.ai-field select:focus,.ai-field textarea:focus{outline:none; border-color:var(--accent); box-shadow:0 0 0 3px var(--ring);}
+  .ai-acts{display:flex; flex-wrap:wrap; gap:7px;}
+  .ai-chip{font-size:13px; padding:7px 12px; border-radius:9px; border:1px solid var(--line); background:var(--panel-2); color:var(--ink-soft); cursor:pointer;}
+  .ai-chip.on{background:var(--accent-soft); color:var(--accent-ink); border-color:color-mix(in srgb,var(--accent) 30%,transparent); font-weight:650;}
+  .ai-out{white-space:pre-wrap; background:var(--panel-soft); border:1px solid var(--line); border-radius:10px; padding:12px 14px; font-size:13.5px; max-height:40vh; overflow:auto; line-height:1.7;}
+  .ai-atts{display:flex; flex-wrap:wrap; gap:8px; margin-top:8px;}
+  .ai-att{display:flex; align-items:center; gap:6px; font-size:12px; background:var(--panel-soft); border:1px solid var(--line); border-radius:8px; padding:4px 8px;}
+  .ai-att button{border:none; background:none; color:var(--red); cursor:pointer; font-size:13px;}
+  .ai-status{font-size:12.5px; color:var(--muted);}
+  #dropZone{position:fixed; inset:0; z-index:95; display:none; align-items:center; justify-content:center; background:color-mix(in srgb, var(--accent) 16%, rgba(8,10,18,.55)); backdrop-filter:blur(3px); -webkit-backdrop-filter:blur(3px);}
+  #dropZone.show{display:flex;}
+  #dropZone .dz-card{pointer-events:none; background:var(--panel); border:3px dashed var(--accent); border-radius:22px; padding:42px 60px; text-align:center; box-shadow:var(--shadow); color:var(--ink); animation:fade .2s ease;}
+  #dropZone .dz-ic{font-size:48px; line-height:1;} #dropZone .dz-t{font-size:19px; font-weight:780; margin-top:12px;} #dropZone .dz-s{font-size:13px; color:var(--muted); margin-top:6px;}
   .toast{position:fixed; bottom:26px; left:50%; transform:translateX(-50%) translateY(10px); background:var(--ink); color:var(--bg); padding:11px 20px; border-radius:12px; font-size:14px; font-weight:600; opacity:0; pointer-events:none; transition:.28s; z-index:90; box-shadow:var(--shadow);}
   .toast.show{opacity:1; transform:translateX(-50%) translateY(0);}
   @media(max-width:880px){
     main.content{padding:24px 18px 80px;}
     nav.side{position:fixed; top:0; left:0; bottom:0; z-index:30; transform:translateX(-104%); transition:transform .28s cubic-bezier(.4,0,.2,1); box-shadow:var(--shadow);}
     .wrap.open nav.side{transform:none;} .wrap.open .scrim{display:block;}
-    .menu-btn{display:grid;} .searchbox{order:5; flex-basis:100%; max-width:none;} header.top{flex-wrap:wrap;}
+    .menu-btn{display:grid;} .sidebar-toggle{display:none;} .searchbox{order:5; flex-basis:100%; max-width:none;} header.top{flex-wrap:wrap;}
+    .wrap.nav-hidden nav.side{width:280px; flex-basis:280px;}
     article h1{font-size:25px;} .btn-primary span.lbl{display:none;}
   }
 </style>
 </head>
 <body>
 <div id="wallLayer"></div><div id="wallDim"></div>
+<div id="dropZone"><div class="dz-card"><div class="dz-ic">📥</div><div class="dz-t">松手即可批量导入</div><div class="dz-s">支持 .md / .markdown / .txt（笔记）· .html（页面）· .json（备份）<br>可拖入多个文件或整个文件夹</div></div></div>
 <header class="top">
   <button class="menu-btn" aria-label="菜单" onclick="WIKI.toggleNav()">☰</button>
+  <button class="iconbtn sidebar-toggle" title="隐藏 / 显示侧边栏" onclick="WIKI.toggleSidebar()">◧</button>
   <div class="logo"><span class="mark">📚</span><span class="txt">我的学习 <b>Wiki</b></span></div>
   <div class="searchbox">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
@@ -203,16 +265,29 @@
   <div class="spacer"></div>
   <button class="iconbtn" title="活跃度" onclick="WIKI.showActivity()">📊</button>
   <button class="iconbtn" title="壁纸 / 外观" onclick="WIKI.openSettings()">🎨</button>
+  <button class="iconbtn" title="AI 设置" onclick="WIKI.openAISettings()">🤖</button>
   <button class="iconbtn" id="themeBtn" title="切换明暗主题" onclick="WIKI.toggleTheme()">🌙</button>
   <button class="iconbtn" title="导出备份" onclick="WIKI.exportData()">⬇</button>
   <button class="iconbtn" title="导入备份" onclick="document.getElementById('importFile').click()">⬆</button>
   <input id="importFile" type="file" accept=".json" style="display:none" onchange="WIKI.importData(this.files[0])">
+  <button class="iconbtn" title="导入 HTML 文件为新页面" onclick="document.getElementById('htmlFile').click()">🌐</button>
+  <input id="htmlFile" type="file" accept=".html,.htm" style="display:none" onchange="WIKI.importHtmlFile(this.files[0]); this.value='';">
+  <button class="iconbtn" title="批量导入 Markdown 文件" onclick="document.getElementById('mdFiles').click()">📥</button>
+  <input id="mdFiles" type="file" accept=".md,.markdown,.txt,text/markdown" multiple style="display:none" onchange="WIKI.importMarkdownFiles(this.files); this.value='';">
   <button class="btn-primary" onclick="WIKI.openEditor(null)">＋<span class="lbl"> 新建</span></button>
 </header>
 
 <div class="wrap" id="wrap">
   <div class="scrim" onclick="WIKI.toggleNav(false)"></div>
-  <nav class="side" id="sidebar"></nav>
+  <nav class="side" id="sidebar">
+    <div class="side-tools">
+      <span class="side-title">文件结构</span>
+      <button class="side-mini" title="新建文件夹" onclick="WIKI.newFolder()">📁＋</button>
+      <button class="side-mini" title="全部折叠" onclick="WIKI.collapseAll(true)">⊟</button>
+      <button class="side-mini" title="全部展开" onclick="WIKI.collapseAll(false)">⊞</button>
+    </div>
+    <div id="treeRoot"></div>
+  </nav>
   <main class="content" id="main">
     <article id="reader" class="reader">
       <div class="crumb" id="crumb"></div>
@@ -220,6 +295,7 @@
       <div class="meta" id="pgMeta"></div>
       <div class="page-actions">
         <button class="btn-soft" onclick="WIKI.openEditor(WIKI.cur())">✎ 编辑</button>
+        <button class="btn-soft" onclick="WIKI.openAIOrganize()">✨ AI 整理</button>
       </div>
       <div id="pgBody"></div>
       <div class="backlinks" id="backlinks"></div>
@@ -243,6 +319,7 @@
     <div class="field" id="presetField"><label>选一张预设</label><div class="presets" id="presets"></div></div>
     <div class="field" id="urlField" style="display:none"><label>图片网址（https://…）</label><input type="text" id="wallUrl" placeholder="粘贴图片链接后按回车" onchange="WIKI.setWallUrl(this.value)"></div>
     <div class="field" id="imgField" style="display:none"><label>从本机选一张图片</label><input type="file" accept="image/*" onchange="WIKI.setWallImage(this.files[0])"></div>
+    <div class="field" id="cropField" style="display:none"><button class="btn-soft" onclick="WIKI.openCropper()">✂ 选择 / 裁剪显示区域</button></div>
     <div class="field"><label>背景模糊 <span class="rangeval" id="blurVal">0px</span></label><input type="range" id="blur" min="0" max="24" value="0" oninput="WIKI.setBlur(this.value)"></div>
     <div class="field"><label>背景压暗 / 提亮（保证文字清晰）<span class="rangeval" id="dimVal">82%</span></label><input type="range" id="dim" min="0" max="100" value="82" oninput="WIKI.setDim(this.value)"></div>
     <div class="field"><button class="btn-ghost" onclick="WIKI.resetWall()">恢复默认背景</button></div>
@@ -254,6 +331,7 @@
     <div class="eh">
       <input class="t" id="edTitle" placeholder="页面标题（其他页面用 [[标题]] 链接到它）">
       <input class="c" id="edCat" placeholder="分类">
+      <button class="iconbtn" id="edMaxBtn" title="最大化 / 还原" onclick="WIKI.toggleEditorMax()" style="flex:0 0 38px">⛶</button>
     </div>
     <div class="tabs">
       <button id="tabVis" class="on" onclick="WIKI.switchTab('vis')">✦ 可视化</button>
@@ -264,12 +342,16 @@
       <button title="斜体" onclick="WIKI.fmt('italic')"><i>I</i></button>
       <button title="标题2" onclick="WIKI.fmtBlock('H2')">H2</button>
       <button title="标题3" onclick="WIKI.fmtBlock('H3')">H3</button>
+      <button title="标题4" onclick="WIKI.fmtBlock('H4')">H4</button>
+      <button title="标题5" onclick="WIKI.fmtBlock('H5')">H5</button>
+      <button title="标题6" onclick="WIKI.fmtBlock('H6')">H6</button>
       <button title="正文" onclick="WIKI.fmtBlock('P')">¶</button>
       <button title="无序列表" onclick="WIKI.fmt('insertUnorderedList')">• 列表</button>
       <button title="有序列表" onclick="WIKI.fmt('insertOrderedList')">1. 列表</button>
       <button title="引用" onclick="WIKI.fmtBlock('BLOCKQUOTE')">❝ 引用</button>
       <button title="行内代码" onclick="WIKI.wrapCode()">&lt;/&gt; 代码</button>
       <button title="链接" onclick="WIKI.makeLink()">🔗 链接</button>
+      <button title="粘贴 HTML 转为笔记内容" onclick="WIKI.openHtmlImport()">⤵ HTML</button>
     </div>
     <div class="epane">
       <div class="wysiwyg" id="wys" contenteditable="true"></div>
@@ -280,6 +362,73 @@
       <span class="grow"></span>
       <button class="btn-danger" id="edDelete" onclick="WIKI.deleteCurrent()">🗑 删除本页</button>
       <button class="btn-ghost" onclick="WIKI.closeEditor()">取消</button>
+    </div>
+  </div>
+</div>
+<div class="modal" id="cropModal" style="z-index:86; padding:2vh 2vw">
+  <div class="crop-wrap">
+    <div class="crop-head"><b style="font-size:15px">✂ 选择要用作壁纸的区域</b><span style="flex:1"></span><button class="iconbtn" onclick="WIKI.closeCropper()" style="flex:0 0 38px">✕</button></div>
+    <div class="crop-hint">拖动方框移动位置，拖动四角调整大小；方框内即为最终显示的壁纸区域。</div>
+    <div class="crop-stage" id="cropStage">
+      <img id="cropImg" alt="">
+      <div class="crop-box" id="cropBox">
+        <i class="crop-h nw" data-h="nw"></i><i class="crop-h ne" data-h="ne"></i>
+        <i class="crop-h sw" data-h="sw"></i><i class="crop-h se" data-h="se"></i>
+      </div>
+    </div>
+    <div class="crop-foot">
+      <button class="btn-green" onclick="WIKI.applyCrop()">✓ 应用裁剪</button>
+      <button class="btn-soft" onclick="WIKI.cropReset()">⟳ 重置选框</button>
+      <button class="btn-soft" onclick="WIKI.cropWhole()">使用整张图</button>
+      <span style="flex:1"></span>
+      <button class="btn-ghost" onclick="WIKI.closeCropper()">取消</button>
+    </div>
+  </div>
+</div>
+<div class="modal" id="htmlImportModal" style="z-index:85">
+  <div class="editor" style="max-width:760px; height:auto; max-height:88vh; resize:none;">
+    <div class="eh"><b style="font-size:15px">⤵ 粘贴 HTML，转换为笔记内容</b><span class="grow" style="flex:1"></span><button class="iconbtn" onclick="WIKI.closeHtmlImport()" style="flex:0 0 38px">✕</button></div>
+    <div class="epane"><textarea id="htmlImportSrc" class="mdsrc" style="min-height:260px" placeholder="把网页或文档的 HTML 源码粘贴到这里，将自动转换为可编辑的 Markdown 并插入当前编辑器…"></textarea></div>
+    <div class="ef"><button class="btn-green" onclick="WIKI.doHtmlImport()">✓ 转换并插入</button><span class="grow"></span><button class="btn-ghost" onclick="WIKI.closeHtmlImport()">取消</button></div>
+  </div>
+</div>
+<div class="modal" id="aiSettingsModal" style="z-index:84">
+  <div class="editor" style="max-width:560px; height:auto; max-height:92vh; resize:none;">
+    <div class="eh"><b style="font-size:15px">🤖 AI 设置</b><span class="grow" style="flex:1"></span><button class="iconbtn" onclick="WIKI.closeAISettings()" style="flex:0 0 38px">✕</button></div>
+    <div class="epane">
+      <div class="ai-field"><label>接口类型</label><select id="aiProvider" onchange="WIKI.aiProviderChanged()"><option value="openai">OpenAI 兼容（OpenAI / DeepSeek / Kimi / 智谱 / Ollama…）</option><option value="anthropic">Anthropic Claude</option></select></div>
+      <div class="ai-field"><label>接口地址 Base URL</label><input id="aiBaseURL" type="text" placeholder="https://api.openai.com/v1"></div>
+      <div class="ai-field"><label>API Key</label><input id="aiKey" type="password" placeholder="sk-..." autocomplete="off"></div>
+      <div class="ai-field"><label>模型名</label><input id="aiModel" type="text" placeholder="gpt-4o-mini"></div>
+      <div class="ai-status" id="aiSettingsStatus">密钥仅保存在本机浏览器，不会上传到任何服务器。</div>
+    </div>
+    <div class="ef"><button class="btn-green" onclick="WIKI.saveAISettings()">✓ 保存</button><button class="btn-soft" onclick="WIKI.testAI()">🔌 测试连接</button><span class="grow"></span><button class="btn-ghost" onclick="WIKI.closeAISettings()">取消</button></div>
+  </div>
+</div>
+<div class="modal" id="aiOrganizeModal" style="z-index:84">
+  <div class="editor" style="max-width:820px; height:auto; max-height:94vh; resize:none;">
+    <div class="eh"><b style="font-size:15px">✨ AI 整理笔记</b><span class="ai-status" id="aiCurNote"></span><span class="grow" style="flex:1"></span><button class="iconbtn" onclick="WIKI.closeAIOrganize()" style="flex:0 0 38px">✕</button></div>
+    <div class="epane">
+      <div class="ai-field"><label>整理动作（可多选）</label><div class="ai-acts" id="aiActs">
+        <span class="ai-chip on" data-act="polish">润色 / 重写</span>
+        <span class="ai-chip" data-act="summary">生成摘要 / 大纲</span>
+        <span class="ai-chip" data-act="categorize">建议分类文件夹</span>
+        <span class="ai-chip" data-act="format">格式整理 / 纠错</span>
+      </div></div>
+      <div class="ai-field"><label>补充指令（可选）</label><textarea id="aiInstruct" style="min-height:60px" placeholder="例如：用更口语化的语气、补充一个例子、翻译成英文…"></textarea></div>
+      <div class="ai-field"><label>附带图片 / PDF（可选，用于从素材整理笔记）</label>
+        <input id="aiFiles" type="file" accept="image/*,.pdf" multiple onchange="WIKI.aiAddFiles(this.files); this.value='';">
+        <div class="ai-atts" id="aiAtts"></div>
+      </div>
+      <div class="ai-field" id="aiOutWrap" style="display:none"><label>AI 结果 <span class="ai-status" id="aiRunStatus"></span></label><div class="ai-out" id="aiOut"></div></div>
+    </div>
+    <div class="ef">
+      <button class="btn-green" id="aiRunBtn" onclick="WIKI.runAIOrganize()">▶ 运行</button>
+      <span class="grow"></span>
+      <button class="btn-soft" id="aiApplyReplace" style="display:none" onclick="WIKI.aiApply('replace')">替换正文</button>
+      <button class="btn-soft" id="aiApplyPrepend" style="display:none" onclick="WIKI.aiApply('prepend')">插入开头</button>
+      <button class="btn-soft" id="aiApplyCat" style="display:none" onclick="WIKI.aiApply('cat')">采用分类</button>
+      <button class="btn-ghost" onclick="WIKI.closeAIOrganize()">关闭</button>
     </div>
   </div>
 </div>
@@ -317,7 +466,8 @@ const WIKI=(function(){
       let ln=lines[i];
       if(ln.indexOf(FENCE)===0){ let buf=[]; i++; while(i<lines.length && lines[i].indexOf(FENCE)!==0){ buf.push(lines[i]); i++; } i++; html+='<pre class="code">'+esc(buf.join('\n'))+'</pre>'; continue; }
       if(/^@embed\s+/.test(ln)){ const src=ln.replace(/^@embed\s+/,'').trim(); html+='<iframe class="embed" src="'+src.replace(/"/g,'%22')+'" loading="lazy"></iframe>'; i++; continue; }
-      let h=ln.match(/^(#{1,3})\s+(.*)$/);
+      if(/^@embedhtml\s+/.test(ln)){ const b64=ln.replace(/^@embedhtml\s+/,'').trim(); let doc=''; try{ doc=decodeURIComponent(escape(atob(b64))); }catch(e){ doc=''; } doc+='<style id="__wikiBgKill">:root,html,body{background:transparent !important;background-color:transparent !important;}</style>'; html+='<iframe class="embed" srcdoc="'+doc.replace(/&/g,'&amp;').replace(/"/g,'&quot;')+'" sandbox="allow-scripts allow-same-origin allow-popups" loading="lazy"></iframe>'; i++; continue; }
+      let h=ln.match(/^(#{1,6})\s+(.*)$/);
       if(h){ const lv=h[1].length; html+='<h'+lv+'>'+inline(h[2])+'</h'+lv+'>'; i++; continue; }
       if(/^---+$/.test(ln.trim())){ html+='<hr>'; i++; continue; }
       if(/^>\s?/.test(ln)){ let buf=[]; while(i<lines.length && /^>\s?/.test(lines[i])){ buf.push(lines[i].replace(/^>\s?/,'')); i++; } html+='<blockquote>'+inline(buf.join(' '))+'</blockquote>'; continue; }
@@ -326,7 +476,7 @@ const WIKI=(function(){
       if(/^\s*\d+\.\s+/.test(ln)){ let buf=[]; while(i<lines.length && /^\s*\d+\.\s+/.test(lines[i])){ buf.push(lines[i].replace(/^\s*\d+\.\s+/,'')); i++; } html+='<ol>'+buf.map(b=>'<li>'+inline(b)+'</li>').join('')+'</ol>'; continue; }
       if(ln.trim()===''){ i++; continue; }
       let buf=[ln]; i++;
-      while(i<lines.length && lines[i].trim()!=='' && !/^(#{1,3}\s|>|\s*[-*]\s|\s*\d+\.\s|---+$)/.test(lines[i]) && lines[i].indexOf(FENCE)!==0 && !isTableStart(i)){ buf.push(lines[i]); i++; }
+      while(i<lines.length && lines[i].trim()!=='' && !/^(#{1,6}\s|>|\s*[-*]\s|\s*\d+\.\s|---+$)/.test(lines[i]) && lines[i].indexOf(FENCE)!==0 && !isTableStart(i)){ buf.push(lines[i]); i++; }
       html+='<p>'+buf.map(inline).join('<br>')+'</p>';
     }
     return html;
@@ -338,13 +488,13 @@ const WIKI=(function(){
       else if(tag==='a') s+='['+inner+']('+(n.getAttribute('href')||'')+')'; else if(tag==='br') s+='\n'; else s+=inner; }); return s; }
     let out='';
     function block(node){ node.childNodes.forEach(n=>{ if(n.nodeType===3){ const t=n.nodeValue.replace(/\s+/g,' ').trim(); if(t) out+=t+'\n\n'; return; } if(n.nodeType!==1) return; const tag=n.nodeName.toLowerCase();
-      if(tag==='h1') out+='# '+inlineMd(n).trim()+'\n\n'; else if(tag==='h2') out+='## '+inlineMd(n).trim()+'\n\n'; else if(tag==='h3') out+='### '+inlineMd(n).trim()+'\n\n';
+      if(/^h[1-6]$/.test(tag)) out+='#'.repeat(+tag[1])+' '+inlineMd(n).trim()+'\n\n';
       else if(tag==='ul'){ n.querySelectorAll(':scope > li').forEach(li=>{ out+='- '+inlineMd(li).trim()+'\n'; }); out+='\n'; }
       else if(tag==='ol'){ let k=1; n.querySelectorAll(':scope > li').forEach(li=>{ out+=(k++)+'. '+inlineMd(li).trim()+'\n'; }); out+='\n'; }
       else if(tag==='blockquote'){ out+='> '+inlineMd(n).trim().replace(/\n+/g,' ')+'\n\n'; }
       else if(tag==='pre'){ const F=String.fromCharCode(96,96,96); out+=F+'\n'+n.textContent.replace(/\n+$/,'')+'\n'+F+'\n\n'; }
-      else if(tag==='iframe'){ out+='@embed '+(n.getAttribute('src')||'')+'\n\n'; }
-      else if(tag==='div'||tag==='p'){ const inner=inlineMd(n).trim(); out+= inner? inner+'\n\n':''; }
+      else if(tag==='iframe'){ const sd=n.getAttribute('srcdoc'); if(sd!=null){ out+='@embedhtml '+btoa(unescape(encodeURIComponent(sd)))+'\n\n'; } else { out+='@embed '+(n.getAttribute('src')||'')+'\n\n'; } }
+      else if(tag==='div'||tag==='p'){ if(n.querySelector&&n.querySelector('iframe')){ block(n); return; } const inner=inlineMd(n).trim(); out+= inner? inner+'\n\n':''; }
       else { const inner=inlineMd(n).trim(); if(inner) out+=inner+'\n\n'; } }); }
     block(root); return out.replace(/\n{3,}/g,'\n\n').trim();
   }
@@ -374,17 +524,61 @@ const WIKI=(function(){
   function openResult(i){ if(curResults[i]){ open(curResults[i].id); document.getElementById('results').classList.remove('show'); document.getElementById('search').blur(); } }
 
   function escAttr(s){ return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
-  function renderSidebar(filter){ const sb=document.getElementById('sidebar'); const cats={};
-    Object.values(notes).forEach(n=>{ if(filter){ const f=filter.toLowerCase(); if(!n.title.toLowerCase().includes(f) && !(n.body||'').toLowerCase().includes(f)) return; } const c=n.category||'未分类'; (cats[c]=cats[c]||[]).push(n); });
-    const keys=Object.keys(cats).sort(); if(keys.length===0){ sb.innerHTML='<div class="empty">没有匹配的页面。</div>'; return; }
-    let html=''; keys.forEach(c=>{ html+='<div class="cat">'+escAttr(c)+'</div>'; cats[c].sort((a,b)=>a.title.localeCompare(b.title,'zh')).forEach(n=>{ html+='<a class="item'+(n.id===current&&view==='note'?' active':'')+'" onclick="WIKI.open(\''+n.id+'\')"><span class="dot"></span>'+escAttr(n.title)+'</a>'; }); });
-    sb.innerHTML=html;
+  const FOLDER_KEY='wikiFolders', FOLDCOL_KEY='wikiFoldersCollapsed';
+  function getFolders(){ try{ return JSON.parse(localStorage.getItem(FOLDER_KEY)||'[]'); }catch(e){ return []; } }
+  function saveFolders(a){ try{ localStorage.setItem(FOLDER_KEY,JSON.stringify(Array.from(new Set(a)))); }catch(e){} }
+  function getCollapsed(){ try{ return JSON.parse(localStorage.getItem(FOLDCOL_KEY)||'{}'); }catch(e){ return {}; } }
+  function saveCollapsed(o){ try{ localStorage.setItem(FOLDCOL_KEY,JSON.stringify(o)); }catch(e){} }
+  function searchVal(){ const s=document.getElementById('search'); return s?s.value.trim():''; }
+  function jsesc(s){ return (s||'').replace(/\\/g,'\\\\').replace(/'/g,"\\'"); }
+  function allFolderPaths(){ const set=new Set(); const add=p=>{ if(!p) return; const parts=p.split('/'); let cur=''; parts.forEach(seg=>{ seg=seg.trim(); if(!seg) return; cur=cur?cur+'/'+seg:seg; set.add(cur); }); };
+    Object.values(notes).forEach(n=>add((n.category||'').trim())); getFolders().forEach(add); return Array.from(set); }
+  function buildTree(filterFn){ const root={name:'',path:'',children:{},notes:[]};
+    function ensure(path){ if(!path) return root; let node=root, cur=''; path.split('/').forEach(p=>{ p=p.trim(); if(!p) return; cur=cur?cur+'/'+p:p; if(!node.children[p]) node.children[p]={name:p,path:cur,children:{},notes:[]}; node=node.children[p]; }); return node; }
+    allFolderPaths().forEach(p=>ensure(p));
+    Object.values(notes).forEach(n=>{ if(filterFn&&!filterFn(n)) return; ensure((n.category||'').trim()).notes.push(n); });
+    return root; }
+  function countNotes(node){ let c=node.notes.length; Object.values(node.children).forEach(ch=>c+=countNotes(ch)); return c; }
+  function renderSidebar(filter){ const host=document.getElementById('treeRoot'); if(!host) return;
+    const f=(filter||'').trim().toLowerCase(); const filterFn=f?(n=>n.title.toLowerCase().includes(f)||(n.body||'').toLowerCase().includes(f)):null;
+    const root=buildTree(filterFn), col=getCollapsed();
+    function nodeHTML(node,depth){ let out=''; const pad=8+depth*14;
+      Object.values(node.children).sort((a,b)=>a.name.localeCompare(b.name,'zh')).forEach(fd=>{ if(filterFn&&countNotes(fd)===0) return; const isCol=!f&&col[fd.path]; const ep=jsesc(fd.path);
+        out+='<div class="tree-row folder'+(isCol?' collapsed':'')+'" data-folder="'+escAttr(fd.path)+'" style="padding-left:'+pad+'px" onclick="WIKI.toggleFolder(\''+ep+'\')" ondragover="WIKI.folderDragOver(event)" ondragleave="WIKI.folderDragLeave(event)" ondrop="WIKI.folderDrop(event,\''+ep+'\')">'
+          +'<span class="caret">▾</span><span>📁</span><span class="tlabel">'+escAttr(fd.name)+'</span><span class="tcount">'+countNotes(fd)+'</span>'
+          +'<span class="tacts"><button title="在此新建笔记" onclick="event.stopPropagation();WIKI.newNoteInFolder(\''+ep+'\')">＋</button><button title="重命名" onclick="event.stopPropagation();WIKI.renameFolder(\''+ep+'\')">✎</button><button title="删除" onclick="event.stopPropagation();WIKI.deleteFolder(\''+ep+'\')">🗑</button></span></div>';
+        out+='<div class="tree-children'+(isCol?' hidden':'')+'">'+nodeHTML(fd,depth+1)+'</div>'; });
+      node.notes.sort((a,b)=>a.title.localeCompare(b.title,'zh')).forEach(n=>{
+        out+='<div class="tree-row note'+(n.id===current&&view==='note'?' active':'')+'" draggable="true" data-note="'+n.id+'" style="padding-left:'+(pad+14)+'px" onclick="WIKI.open(\''+n.id+'\')" ondragstart="WIKI.noteDragStart(event,\''+n.id+'\')" ondragend="WIKI.noteDragEnd()"><span class="dot"></span><span class="tlabel">'+escAttr(n.title)+'</span></div>'; });
+      return out; }
+    let html=nodeHTML(root,0); host.innerHTML=html||'<div class="empty">没有匹配的页面。</div>';
   }
+  function toggleFolder(path){ const col=getCollapsed(); col[path]=!col[path]; if(!col[path]) delete col[path]; saveCollapsed(col); renderSidebar(searchVal()); }
+  function collapseAll(c){ const col={}; if(c) allFolderPaths().forEach(p=>col[p]=true); saveCollapsed(col); renderSidebar(searchVal()); }
+  function newFolder(){ const name=prompt('新建文件夹（可用 / 建立多级，如  操作系统/并发）：',''); if(name==null) return; const path=name.split('/').map(s=>s.trim()).filter(Boolean).join('/'); if(!path) return; const fs=getFolders(); fs.push(path); saveFolders(fs); const col=getCollapsed(); delete col[path]; saveCollapsed(col); renderSidebar(searchVal()); toast('已创建文件夹「'+path+'」'); }
+  function newNoteInFolder(path){ openEditor(null); document.getElementById('edCat').value=path; }
+  function renameFolder(path){ const parts=path.split('/'); const cur=parts[parts.length-1]; const nn=prompt('重命名文件夹（仅改这一级名称）：',cur); if(nn==null) return; const name=nn.trim(); if(!name||name===cur) return; parts[parts.length-1]=name; reassignPrefix(path,parts.join('/')); toast('已重命名为「'+name+'」'); }
+  function deleteFolder(path){ const parent=path.split('/').slice(0,-1).join('/'); if(!confirm('删除文件夹「'+path+'」？\n其中的笔记与子文件夹会移动到上一级（不会删除笔记）。')) return; reassignPrefix(path,parent); saveFolders(getFolders().filter(p=>p!==path)); toast('已删除文件夹'); }
+  function reassignPrefix(oldP,newP){
+    Object.values(notes).forEach(n=>{ const c=(n.category||'').trim(); if(c===oldP) n.category=newP; else if(c.startsWith(oldP+'/')) n.category=(newP?newP+'/':'')+c.slice(oldP.length+1); });
+    saveFolders(getFolders().map(p=>{ if(p===oldP) return newP; if(p.startsWith(oldP+'/')) return (newP?newP+'/':'')+p.slice(oldP.length+1); return p; }).filter(Boolean));
+    const col=getCollapsed(), ncol={}; Object.keys(col).forEach(k=>{ let nk=k; if(k===oldP) nk=newP; else if(k.startsWith(oldP+'/')) nk=(newP?newP+'/':'')+k.slice(oldP.length+1); if(nk) ncol[nk]=col[k]; }); saveCollapsed(ncol);
+    persist(); renderSidebar(searchVal()); refreshCrumb();
+  }
+  function refreshCrumb(){ if(current&&notes[current]) document.getElementById('crumb').innerHTML='<span class="chip">'+escAttr(notes[current].category||'未分类')+'</span> ／ '+escAttr(notes[current].title); }
+  let dragNoteId=null;
+  function noteDragStart(e,id){ dragNoteId=id; try{ e.dataTransfer.setData('text/plain',id); e.dataTransfer.effectAllowed='move'; }catch(_){ } const tr=document.getElementById('treeRoot'); if(tr) tr.classList.add('drop-root'); }
+  function noteDragEnd(){ dragNoteId=null; const tr=document.getElementById('treeRoot'); if(tr) tr.classList.remove('drop-root'); document.querySelectorAll('.tree-row.drop-target').forEach(el=>el.classList.remove('drop-target')); }
+  function folderDragOver(e){ if(!dragNoteId) return; e.preventDefault(); e.stopPropagation(); e.currentTarget.classList.add('drop-target'); }
+  function folderDragLeave(e){ e.currentTarget.classList.remove('drop-target'); }
+  function folderDrop(e,path){ if(!dragNoteId) return; e.preventDefault(); e.stopPropagation(); e.currentTarget.classList.remove('drop-target'); moveNoteToFolder(dragNoteId,path); noteDragEnd(); }
+  function moveNoteToFolder(id,path){ if(!notes[id]) return; notes[id].category=path; notes[id].updated=new Date().toISOString().slice(0,16).replace('T',' '); persist(); renderSidebar(searchVal()); refreshCrumb(); toast('已移动到「'+(path||'根目录')+'」'); }
   function showView(v){ view=v; document.getElementById('reader').style.display=v==='note'?'':'none'; document.getElementById('activity').style.display=v==='activity'?'':'none'; }
   function open(id){ if(!notes[id]) return; current=id; showView('note'); const n=notes[id];
     document.getElementById('crumb').innerHTML='<span class="chip">'+escAttr(n.category||'未分类')+'</span> ／ '+escAttr(n.title);
     document.getElementById('pgTitle').textContent=n.title; document.getElementById('pgMeta').textContent=n.updated?('最近更新：'+n.updated):'';
     document.getElementById('pgBody').innerHTML=render(n.body); renderBacklinks(id); renderSidebar(document.getElementById('search').value.trim());
+    const isEmbed=/(^|\n)@embed(html)?\s+/.test(n.body||''); document.getElementById('reader').classList.toggle('embed-page',isEmbed); autoSizeEmbeds();
     document.getElementById('main').scrollTop=0; recordVisit(); toggleNav(false);
   }
   function renderBacklinks(id){ const title=notes[id].title.trim(); const refs=Object.values(notes).filter(n=>n.id!==id && new RegExp('\\[\\[\\s*'+title.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')+'\\s*\\]\\]').test(n.body||''));
@@ -429,6 +623,7 @@ const WIKI=(function(){
   }
   function refreshWallUI(){ const w=getWall(); document.querySelectorAll('#wallType button').forEach(b=>b.classList.toggle('on',b.dataset.t===w.type));
     document.getElementById('presetField').style.display=w.type==='preset'?'':'none'; document.getElementById('urlField').style.display=w.type==='url'?'':'none'; document.getElementById('imgField').style.display=w.type==='image'?'':'none';
+    document.getElementById('cropField').style.display=((w.type==='image'||w.type==='url')&&w.value)?'':'none';
     document.getElementById('blur').value=w.blur||0; document.getElementById('blurVal').textContent=(w.blur||0)+'px'; document.getElementById('dim').value=(w.dim==null?82:w.dim); document.getElementById('dimVal').textContent=(w.dim==null?82:w.dim)+'%';
     document.getElementById('presets').innerHTML=PRESETS.map((p,i)=>'<div class="preset'+(w.type==='preset'&&w.value===p?' on':'')+'" style="background:'+p+'" onclick="WIKI.setPreset('+i+')"></div>').join(''); if(w.type==='url') document.getElementById('wallUrl').value=w.value||'';
   }
@@ -437,16 +632,48 @@ const WIKI=(function(){
   function setWallType(t){ const w=getWall(); w.type=t; if(t==='none')w.value=''; saveWall(w); applyWall(w); refreshWallUI(); }
   function setPreset(i){ const w=getWall(); w.type='preset'; w.value=PRESETS[i]; saveWall(w); applyWall(w); refreshWallUI(); }
   function setWallUrl(v){ const w=getWall(); w.type='url'; w.value=v.trim(); saveWall(w); applyWall(w); }
-  function setWallImage(file){ if(!file) return; const r=new FileReader(); r.onload=e=>{ const w=getWall(); w.type='image'; w.value=e.target.result; saveWall(w); applyWall(w); toast('✓ 壁纸已设置'); }; r.readAsDataURL(file); }
+  function setWallImage(file){ if(!file) return; const r=new FileReader(); r.onload=e=>{ openCropper(e.target.result); }; r.readAsDataURL(file); }
   function setBlur(v){ const w=getWall(); w.blur=+v; saveWall(w); applyWall(w); document.getElementById('blurVal').textContent=v+'px'; }
   function setDim(v){ const w=getWall(); w.dim=+v; saveWall(w); applyWall(w); document.getElementById('dimVal').textContent=v+'%'; }
   function resetWall(){ const w={type:'none',value:'',blur:0,dim:82}; saveWall(w); applyWall(w); refreshWallUI(); toast('已恢复默认背景'); }
+
+  let cropSrc='', cropStageW=0, cropStageH=0, cropState={x:0,y:0,w:0,h:0}, cropDrag=null;
+  function openCropper(src){ src=src||getWall().value; if(!src){ toast('请先选择一张图片'); return; }
+    cropSrc=src; const img=document.getElementById('cropImg'); let triedPlain=false;
+    img.onload=()=>{ cropStageW=img.clientWidth; cropStageH=img.clientHeight; cropReset(); };
+    img.onerror=()=>{ if(!triedPlain && !/^data:/.test(src)){ triedPlain=true; img.removeAttribute('crossorigin'); img.src=src; toast('该图片不支持跨域裁剪，仅可调整位置'); } else { toast('⚠ 图片无法加载'); closeCropper(); } };
+    if(/^data:/.test(src)) img.removeAttribute('crossorigin'); else img.crossOrigin='anonymous';
+    img.src=src; document.getElementById('cropModal').classList.add('show');
+  }
+  function closeCropper(){ document.getElementById('cropModal').classList.remove('show'); }
+  function cropSync(){ const b=document.getElementById('cropBox'); b.style.left=cropState.x+'px'; b.style.top=cropState.y+'px'; b.style.width=cropState.w+'px'; b.style.height=cropState.h+'px'; }
+  function cropReset(){ const img=document.getElementById('cropImg'); cropStageW=img.clientWidth; cropStageH=img.clientHeight; cropState={x:0,y:0,w:cropStageW,h:cropStageH}; cropSync(); }
+  function cropDown(e){ const handle=e.target.classList.contains('crop-h')?e.target.dataset.h:null;
+    cropDrag={mode:handle?('h-'+handle):'move', sx:e.clientX, sy:e.clientY, ox:cropState.x, oy:cropState.y, ow:cropState.w, oh:cropState.h};
+    e.preventDefault(); e.stopPropagation(); window.addEventListener('pointermove',cropMove); window.addEventListener('pointerup',cropUp); }
+  function cropMove(e){ if(!cropDrag) return; const dx=e.clientX-cropDrag.sx, dy=e.clientY-cropDrag.sy, W=cropStageW, H=cropStageH, MIN=24; const {ox,oy,ow,oh,mode}=cropDrag;
+    if(mode==='move'){ cropState.x=Math.max(0,Math.min(ox+dx,W-ow)); cropState.y=Math.max(0,Math.min(oy+dy,H-oh)); }
+    else { let x1=ox,y1=oy,x2=ox+ow,y2=oy+oh;
+      if(mode.includes('w')) x1=Math.max(0,Math.min(ox+dx,x2-MIN));
+      if(mode.includes('e')) x2=Math.min(W,Math.max(ox+ow+dx,x1+MIN));
+      if(mode.includes('n')) y1=Math.max(0,Math.min(oy+dy,y2-MIN));
+      if(mode.includes('s')) y2=Math.min(H,Math.max(oy+oh+dy,y1+MIN));
+      cropState={x:x1,y:y1,w:x2-x1,h:y2-y1}; }
+    cropSync(); }
+  function cropUp(){ cropDrag=null; window.removeEventListener('pointermove',cropMove); window.removeEventListener('pointerup',cropUp); }
+  function cropWhole(){ const w=getWall(); w.type='image'; w.value=cropSrc; saveWall(w); applyWall(w); refreshWallUI(); closeCropper(); toast('✓ 壁纸已设置'); }
+  function applyCrop(){ const img=document.getElementById('cropImg'); const rx=img.naturalWidth/cropStageW, ry=img.naturalHeight/cropStageH;
+    const sx=Math.round(cropState.x*rx), sy=Math.round(cropState.y*ry), sw=Math.max(1,Math.round(cropState.w*rx)), sh=Math.max(1,Math.round(cropState.h*ry));
+    let out; try{ const cv=document.createElement('canvas'); cv.width=sw; cv.height=sh; cv.getContext('2d').drawImage(img,sx,sy,sw,sh,0,0,sw,sh); out=cv.toDataURL('image/jpeg',0.92); }
+    catch(e){ toast('该图片来源不允许裁剪，已使用整图'); out=cropSrc; }
+    const w=getWall(); w.type='image'; w.value=out; saveWall(w); applyWall(w); refreshWallUI(); closeCropper(); toast('✓ 壁纸已更新'); }
 
   function openEditor(id){ editingId=id&&notes[id]?id:null; const n=editingId?notes[editingId]:{title:'',category:'',body:''};
     document.getElementById('edTitle').value=n.title||''; document.getElementById('edCat').value=n.category||''; document.getElementById('mdsrc').value=n.body||'';
     document.getElementById('edDelete').style.display=editingId?'':'none'; switchTab('vis'); document.getElementById('modal').classList.add('show'); toggleNav(false);
   }
   function closeEditor(){ document.getElementById('modal').classList.remove('show'); }
+  function toggleEditorMax(){ const ed=document.querySelector('#modal .editor'); ed.classList.toggle('max'); document.getElementById('edMaxBtn').textContent=ed.classList.contains('max')?'❐':'⛶'; }
   function switchTab(t){ const wys=document.getElementById('wys'), md=document.getElementById('mdsrc');
     if(t==='vis'){ wys.innerHTML=render(md.value); wys.style.display=''; md.style.display='none'; document.getElementById('tabVis').classList.add('on'); document.getElementById('tabMd').classList.remove('on'); document.getElementById('toolbar').style.display='flex'; }
     else { md.value=htmlToMd(wys); wys.style.display='none'; md.style.display=''; document.getElementById('tabMd').classList.add('on'); document.getElementById('tabVis').classList.remove('on'); document.getElementById('toolbar').style.display='none'; }
@@ -467,9 +694,133 @@ const WIKI=(function(){
   function exportData(){ const blob=new Blob([JSON.stringify(notes,null,2)],{type:'application/json'}); const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download='我的学习Wiki备份-'+new Date().toISOString().slice(0,10)+'.json'; a.click(); URL.revokeObjectURL(a.href); toast('✓ 已导出备份'); }
   function importData(file){ if(!file) return; const r=new FileReader(); r.onload=e=>{ try{ const data=JSON.parse(e.target.result); if(typeof data!=='object') throw 0; if(!confirm('导入将合并/覆盖同名页面，继续吗？')) return; Object.assign(notes,data); persist(); const ids=Object.keys(notes); if(ids.length) open(ids[0]); toast('✓ 导入成功'); }catch(err){ toast('⚠ 文件格式不正确'); } }; r.readAsText(file); }
 
+  function importHtmlFile(file){ if(!file) return; const r=new FileReader(); r.onload=e=>{
+      let html=e.target.result||''; let name=(file.name||'导入页面').replace(/\.[^.]+$/,'');
+      const tm=html.match(/<title[^>]*>([\s\S]*?)<\/title>/i); if(tm&&tm[1].trim()) name=tm[1].trim();
+      let base=name, n=2; while(idByTitle(name)){ name=base+' ('+(n++)+')'; }
+      const b64=btoa(unescape(encodeURIComponent(html))); const now=new Date().toISOString().slice(0,16).replace('T',' ');
+      let id=slug(name); while(notes[id]) id+='-'+Math.floor(Math.random()*1000);
+      const body='# '+name+'\n\n> 由 HTML 文件「'+(file.name||'')+'」导入，下方原样嵌入渲染。\n\n@embedhtml '+b64;
+      notes[id]={id,title:name,category:'导入',body,updated:now}; persist(); open(id); toast('✓ 已导入 HTML 为新页面');
+    }; r.readAsText(file,'utf-8'); }
+  async function importMarkdownFiles(files){ if(!files||!files.length) return;
+    const arr=Array.from(files).filter(f=>/\.(md|markdown|txt)$/i.test(f.name));
+    if(!arr.length){ toast('未选择 Markdown 文件'); return; }
+    const now=new Date().toISOString().slice(0,16).replace('T',' '); let count=0, firstId=null, skipped=0;
+    for(const f of arr){ let text=''; try{ text=typeof f.text==='function'?await f.text():await new Promise((res,rej)=>{ const r=new FileReader(); r.onload=()=>res(r.result); r.onerror=rej; r.readAsText(f); }); }catch(e){ skipped++; continue; }
+      text=(text||'').replace(/\r/g,''); let category='Markdown 导入', title='';
+      const fm=text.match(/^---\n([\s\S]*?)\n---\n?/);
+      if(fm){ const meta=fm[1]; const tt=meta.match(/^title:\s*(.+)$/m); if(tt) title=tt[1].trim().replace(/^["']|["']$/g,''); const cc=meta.match(/^category:\s*(.+)$/m); if(cc) category=cc[1].trim().replace(/^["']|["']$/g,''); text=text.slice(fm[0].length); }
+      if(!title){ const h=text.match(/^#\s+(.+)$/m); if(h) title=h[1].trim(); }
+      if(!title) title=f.name.replace(/\.(md|markdown|txt)$/i,'');
+      const rel=f.webkitRelativePath||f._rel; if(rel){ const parts=rel.split('/'); if(parts.length>1 && parts[parts.length-2]) category=parts[parts.length-2]; }
+      let base=title, k=2; while(idByTitle(title)){ title=base+' ('+(k++)+')'; }
+      let id=slug(title); while(notes[id]) id+='-'+Math.floor(Math.random()*1000);
+      notes[id]={id,title,category,body:text.trim(),updated:now}; count++; if(!firstId) firstId=id;
+    }
+    if(count){ persist(); renderSidebar(document.getElementById('search').value.trim()); if(firstId) open(firstId); toast('✓ 已导入 '+count+' 个 Markdown'+(skipped?('，'+skipped+' 个失败'):'')); }
+    else toast('没有可导入的内容');
+  }
+  async function collectDropFiles(dt){ const items=dt.items?Array.from(dt.items):[]; const entries=items.map(it=>it.webkitGetAsEntry&&it.webkitGetAsEntry()).filter(Boolean);
+    if(!entries.length) return Array.from(dt.files||[]); const out=[];
+    function readDir(reader){ return new Promise(res=>{ const acc=[]; const step=()=>reader.readEntries(ents=>{ if(!ents.length){ res(acc); } else { acc.push(...ents); step(); } }, ()=>res(acc)); step(); }); }
+    async function walk(entry,prefix){ if(entry.isFile){ await new Promise(res=>entry.file(f=>{ try{ f._rel=prefix+entry.name; }catch(_){ } out.push(f); res(); },()=>res())); }
+      else if(entry.isDirectory){ const ents=await readDir(entry.createReader()); for(const e of ents) await walk(e, prefix+entry.name+'/'); } }
+    for(const en of entries) await walk(en,''); return out;
+  }
+  function handleDroppedFiles(files){ const arr=Array.from(files||[]); if(!arr.length){ toast('未检测到文件'); return; }
+    const md=arr.filter(f=>/\.(md|markdown|txt)$/i.test(f.name)); const htmls=arr.filter(f=>/\.html?$/i.test(f.name)); const jsons=arr.filter(f=>/\.json$/i.test(f.name));
+    if(md.length) importMarkdownFiles(md); htmls.forEach(f=>importHtmlFile(f)); jsons.forEach(f=>importData(f));
+    if(!md.length && !htmls.length && !jsons.length) toast('仅支持 .md / .html / .json 文件');
+  }
+  function openHtmlImport(){ document.getElementById('htmlImportSrc').value=''; document.getElementById('htmlImportModal').classList.add('show'); setTimeout(()=>document.getElementById('htmlImportSrc').focus(),60); }
+  function closeHtmlImport(){ document.getElementById('htmlImportModal').classList.remove('show'); }
+  function doHtmlImport(){ const raw=document.getElementById('htmlImportSrc').value||''; if(!raw.trim()){ closeHtmlImport(); return; }
+    let md=''; try{ const doc=new DOMParser().parseFromString(raw,'text/html'); md=htmlToMd(doc.body||doc.documentElement); }catch(e){ md=raw; }
+    if(!md.trim()){ toast('未能从 HTML 中提取到内容'); return; }
+    if(edTab==='md'){ const ta=document.getElementById('mdsrc'); ta.value=ta.value.trim()?(ta.value.replace(/\s+$/,'')+'\n\n'+md):md; }
+    else { const wys=document.getElementById('wys'); const exist=htmlToMd(wys); const combined=exist.trim()?(exist+'\n\n'+md):md; wys.innerHTML=render(combined); }
+    closeHtmlImport(); toast('✓ HTML 已转换并插入');
+  }
+  const AI_KEY='wikiAI';
+  function getAI(){ const d={provider:'openai',baseURL:'https://api.openai.com/v1',apiKey:'',model:'gpt-4o-mini'}; try{ return Object.assign(d,JSON.parse(localStorage.getItem(AI_KEY)||'{}')); }catch(e){ return d; } }
+  function saveAI(o){ try{ localStorage.setItem(AI_KEY,JSON.stringify(o)); }catch(e){} }
+  function openAISettings(){ const a=getAI(); document.getElementById('aiProvider').value=a.provider; document.getElementById('aiBaseURL').value=a.baseURL; document.getElementById('aiKey').value=a.apiKey; document.getElementById('aiModel').value=a.model; document.getElementById('aiSettingsModal').classList.add('show'); }
+  function closeAISettings(){ document.getElementById('aiSettingsModal').classList.remove('show'); }
+  function aiProviderChanged(){ const p=document.getElementById('aiProvider').value, b=document.getElementById('aiBaseURL'), m=document.getElementById('aiModel');
+    if(p==='anthropic'){ if(!b.value||/openai/i.test(b.value)) b.value='https://api.anthropic.com'; if(!m.value||/gpt/i.test(m.value)) m.value='claude-3-5-sonnet-latest'; }
+    else{ if(!b.value||/anthropic/i.test(b.value)) b.value='https://api.openai.com/v1'; if(!m.value||/claude/i.test(m.value)) m.value='gpt-4o-mini'; } }
+  function readAIInputs(){ return {provider:document.getElementById('aiProvider').value, baseURL:document.getElementById('aiBaseURL').value.trim().replace(/\/+$/,''), apiKey:document.getElementById('aiKey').value.trim(), model:document.getElementById('aiModel').value.trim()}; }
+  function saveAISettings(){ saveAI(readAIInputs()); toast('✓ AI 设置已保存'); closeAISettings(); }
+  async function testAI(){ const cfg=readAIInputs(); saveAI(cfg); const st=document.getElementById('aiSettingsStatus'); st.textContent='正在测试连接…'; try{ const r=await callAI({system:'You are a connection test.',user:'只回复两个字：成功',cfg}); st.textContent='✓ 连接成功，模型回复：'+r.slice(0,60); }catch(e){ st.textContent='✗ 失败：'+(e.message||e); } }
+  async function callAI(opt){ const a=opt.cfg||getAI(); if(!a.apiKey) throw new Error('未设置 API Key'); if(!a.baseURL) throw new Error('未设置接口地址'); const images=opt.images||[], pdfs=opt.pdfs||[]; const base=a.baseURL.replace(/\/+$/,'');
+    if(a.provider==='anthropic'){ const content=[]; if(opt.user) content.push({type:'text',text:opt.user});
+      images.forEach(d=>{ const m=d.match(/^data:([^;]+);base64,(.*)$/); if(m) content.push({type:'image',source:{type:'base64',media_type:m[1],data:m[2]}}); });
+      pdfs.forEach(d=>{ const m=d.match(/^data:[^;]+;base64,(.*)$/); if(m) content.push({type:'document',source:{type:'base64',media_type:'application/pdf',data:m[1]}}); });
+      const res=await fetch(base+'/v1/messages',{method:'POST',headers:{'content-type':'application/json','x-api-key':a.apiKey,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},body:JSON.stringify({model:a.model,max_tokens:4096,system:opt.system||'',messages:[{role:'user',content}]})});
+      if(!res.ok) throw new Error('HTTP '+res.status+'：'+(await res.text()).slice(0,240));
+      const j=await res.json(); return (j.content||[]).filter(b=>b.type==='text').map(b=>b.text).join('\n').trim();
+    } else { const content=[]; if(opt.user) content.push({type:'text',text:opt.user}); images.forEach(d=>content.push({type:'image_url',image_url:{url:d}}));
+      const messages=[]; if(opt.system) messages.push({role:'system',content:opt.system}); messages.push({role:'user',content:content.length>1?content:(opt.user||'')});
+      const res=await fetch(base+'/chat/completions',{method:'POST',headers:{'content-type':'application/json','authorization':'Bearer '+a.apiKey},body:JSON.stringify({model:a.model,messages})});
+      if(!res.ok) throw new Error('HTTP '+res.status+'：'+(await res.text()).slice(0,240));
+      const j=await res.json(); return ((j.choices&&j.choices[0]&&j.choices[0].message&&j.choices[0].message.content)||'').trim(); } }
+
+  let aiAttachments=[], aiLastBody='', aiSuggestedCat=null;
+  function openAIOrganize(){ if(!current||!notes[current]){ toast('请先打开一篇笔记'); return; } aiAttachments=[]; aiLastBody=''; aiSuggestedCat=null; renderAiAtts();
+    document.getElementById('aiCurNote').textContent='当前：'+notes[current].title; document.getElementById('aiOut').textContent=''; document.getElementById('aiOutWrap').style.display='none'; document.getElementById('aiRunStatus').textContent='';
+    ['aiApplyReplace','aiApplyPrepend','aiApplyCat'].forEach(id=>document.getElementById(id).style.display='none'); document.getElementById('aiOrganizeModal').classList.add('show'); }
+  function closeAIOrganize(){ document.getElementById('aiOrganizeModal').classList.remove('show'); }
+  function aiAddFiles(files){ Array.from(files||[]).forEach(f=>{ const r=new FileReader(); r.onload=e=>{ const kind=(/pdf$/i.test(f.name)||f.type==='application/pdf')?'pdf':'image'; aiAttachments.push({name:f.name,kind,data:e.target.result}); renderAiAtts(); }; r.readAsDataURL(f); }); }
+  function renderAiAtts(){ document.getElementById('aiAtts').innerHTML=aiAttachments.map((a,i)=>'<span class="ai-att">'+(a.kind==='pdf'?'📄':'🖼')+' '+escAttr(a.name)+' <button onclick="WIKI.aiRemoveAtt('+i+')">✕</button></span>').join(''); }
+  function aiRemoveAtt(i){ aiAttachments.splice(i,1); renderAiAtts(); }
+  async function runAIOrganize(){ if(!current||!notes[current]) return; const n=notes[current];
+    const acts=Array.from(document.querySelectorAll('#aiActs .ai-chip.on')).map(c=>c.dataset.act);
+    if(!acts.length&&!aiAttachments.length&&!document.getElementById('aiInstruct').value.trim()){ toast('请至少选择一个动作或填写指令'); return; }
+    const folders=allFolderPaths().sort(); const tasks=[];
+    if(acts.includes('polish')) tasks.push('润色并改写正文，使表达更清晰流畅，但必须保留原意与所有关键信息、代码、公式、表格。');
+    if(acts.includes('summary')) tasks.push('在正文最前面加上「## 摘要」和「## 大纲」两节，分别给出要点摘要与层级大纲。');
+    if(acts.includes('format')) tasks.push('修正 Markdown 格式，统一标题层级与中英文标点，纠正明显的错别字。');
+    if(acts.includes('categorize')) tasks.push('在输出的最后另起一行，用 `CATEGORY: 路径` 给出最合适的分类文件夹路径（用 / 表示层级）。现有文件夹供参考：'+(folders.join(' | ')||'（暂无）'));
+    const up=[]; up.push('请对下面这篇笔记进行整理：'+(tasks.length?('\n'+tasks.map((t,i)=>(i+1)+'. '+t).join('\n')):'按补充指令处理。'));
+    const ins=document.getElementById('aiInstruct').value.trim(); if(ins) up.push('额外要求：'+ins);
+    if(aiAttachments.length) up.push('我附带了图片/PDF素材，请结合它们补充或整理这篇笔记。');
+    up.push('\n笔记标题：'+n.title+'\n当前分类：'+(n.category||'（无）')+'\n\n正文：\n'+n.body);
+    up.push('\n请直接输出整理后的完整 Markdown 正文，不要寒暄或额外解释；若需给分类则把 CATEGORY 行放最后。');
+    const images=aiAttachments.filter(a=>a.kind==='image').map(a=>a.data); const pdfs=aiAttachments.filter(a=>a.kind==='pdf').map(a=>a.data); const ai=getAI();
+    if(pdfs.length&&ai.provider!=='anthropic') toast('PDF 仅 Claude 接口支持，已忽略 PDF');
+    const btn=document.getElementById('aiRunBtn'), st=document.getElementById('aiRunStatus'); btn.disabled=true; st.textContent='AI 处理中…'; document.getElementById('aiOutWrap').style.display=''; document.getElementById('aiOut').textContent='';
+    try{ const out=await callAI({system:'你是一个中文笔记整理助手，严格按要求处理并只输出干净的 Markdown。',user:up.join('\n'),images,pdfs:ai.provider==='anthropic'?pdfs:[]});
+      aiSuggestedCat=null; let body=out; const cm=out.match(/(^|\n)\s*CATEGORY:\s*(.+?)\s*$/i); if(cm){ aiSuggestedCat=cm[2].trim(); body=out.replace(cm[0],'').trim(); }
+      aiLastBody=body; document.getElementById('aiOut').textContent=out;
+      document.getElementById('aiApplyReplace').style.display=''; document.getElementById('aiApplyPrepend').style.display='';
+      const cb=document.getElementById('aiApplyCat'); cb.style.display=aiSuggestedCat?'':'none'; if(aiSuggestedCat) cb.textContent='采用分类：'+aiSuggestedCat;
+      st.textContent='✓ 完成'; }
+    catch(e){ st.textContent='✗ 失败'; document.getElementById('aiOut').textContent='调用失败：'+(e.message||e)+'\n\n若为 CORS/网络错误，说明该接口可能不允许浏览器直接调用，或 Base URL / 密钥有误。'; }
+    finally{ btn.disabled=false; } }
+  function aiApply(mode){ if(!current||!notes[current]) return; const n=notes[current]; const now=new Date().toISOString().slice(0,16).replace('T',' ');
+    if(mode==='replace'){ if(!aiLastBody){ toast('没有可应用的内容'); return; } n.body=aiLastBody; n.updated=now; }
+    else if(mode==='prepend'){ if(!aiLastBody){ toast('没有可应用的内容'); return; } n.body=aiLastBody+'\n\n---\n\n'+n.body; n.updated=now; }
+    else if(mode==='cat'){ if(!aiSuggestedCat) return; n.category=aiSuggestedCat; const fs=getFolders(); fs.push(aiSuggestedCat); saveFolders(fs); }
+    persist(); closeAIOrganize(); open(current); toast('✓ 已应用'); }
   function applyThemeIcon(){ document.getElementById('themeBtn').textContent=document.documentElement.getAttribute('data-theme')==='dark'?'☀️':'🌙'; }
-  function toggleTheme(){ const c=document.documentElement.getAttribute('data-theme')==='dark'?'light':'dark'; document.documentElement.setAttribute('data-theme',c); try{localStorage.setItem('wikiTheme',c);}catch(e){} applyThemeIcon(); }
+  function toggleTheme(){ const c=document.documentElement.getAttribute('data-theme')==='dark'?'light':'dark'; document.documentElement.setAttribute('data-theme',c); try{localStorage.setItem('wikiTheme',c);}catch(e){} applyThemeIcon(); document.querySelectorAll('#pgBody iframe.embed').forEach(fr=>{ neutralizeEmbedBg(fr); fitEmbed(fr); }); }
   function toggleNav(force){ const w=document.getElementById('wrap'); if(force===false){w.classList.remove('open');return;} if(force===true){w.classList.add('open');return;} w.classList.toggle('open'); }
+  function embedOverrideCSS(){ const dark=document.documentElement.getAttribute('data-theme')==='dark';
+    let css=':root,html,body{background:transparent !important;background-color:transparent !important;}';
+    if(dark){ css+='html{filter:invert(1) hue-rotate(180deg);} img,picture,video,svg,canvas,[style*="url("]{filter:invert(1) hue-rotate(180deg);}'; }
+    return css; }
+  function neutralizeEmbedBg(fr){ try{ const d=fr.contentDocument; if(!d) return; let st=d.getElementById('__wikiBgKill'); if(!st){ st=d.createElement('style'); st.id='__wikiBgKill'; (d.head||d.documentElement).appendChild(st); } st.textContent=embedOverrideCSS(); }catch(e){} }
+  function fitEmbed(fr){ try{ const d=fr.contentDocument; if(d&&d.body){ const h=Math.max(d.body.scrollHeight, d.documentElement?d.documentElement.scrollHeight:0); if(h>0){ fr.style.height=(h+2)+'px'; return true; } } }catch(e){} return false; }
+  function autoSizeEmbeds(){ document.querySelectorAll('#pgBody iframe.embed').forEach(fr=>{
+      if(fr._autosized) { neutralizeEmbedBg(fr); fitEmbed(fr); return; } fr._autosized=true;
+      const onload=()=>{ neutralizeEmbedBg(fr); if(!fitEmbed(fr)){ fr.style.height='150vh'; } setTimeout(()=>{neutralizeEmbedBg(fr);fitEmbed(fr);},200); setTimeout(()=>fitEmbed(fr),700); setTimeout(()=>fitEmbed(fr),1500);
+        try{ const d=fr.contentDocument; if(d&&d.body&&window.ResizeObserver){ new ResizeObserver(()=>fitEmbed(fr)).observe(d.body); } if(d&&d.defaultView){ d.defaultView.addEventListener('resize',()=>fitEmbed(fr)); } }catch(e){} };
+      fr.addEventListener('load',onload); neutralizeEmbedBg(fr); if(!fitEmbed(fr)) fr.style.height=fr.style.height||'150vh';
+    });
+  }
+  function applySidebar(){ const hidden=localStorage.getItem('wikiNavHidden')==='1'; document.getElementById('wrap').classList.toggle('nav-hidden',hidden); }
+  function toggleSidebar(){ const w=document.getElementById('wrap'); const hidden=w.classList.toggle('nav-hidden'); try{localStorage.setItem('wikiNavHidden',hidden?'1':'0');}catch(e){} }
   let toastTimer; function toast(msg){ const t=document.getElementById('toast'); t.textContent=msg; t.classList.add('show'); clearTimeout(toastTimer); toastTimer=setTimeout(()=>t.classList.remove('show'),2400); }
 
   function seed(){ const now=new Date().toISOString().slice(0,16).replace('T',' '); const mk=(id,title,category,body)=>({id,title,category,body,updated:now}); const data={};
@@ -482,12 +833,27 @@ const WIKI=(function(){
     ].forEach(n=>data[n.id]=n); return data;
   }
 
-  function init(){ applyThemeIcon(); applyWall(getWall()); load();
+  function init(){ applyThemeIcon(); applyWall(getWall()); applySidebar(); load();
+    document.getElementById('cropBox').addEventListener('pointerdown',cropDown);
+    let embResizeT; window.addEventListener('resize',()=>{ clearTimeout(embResizeT); embResizeT=setTimeout(()=>document.querySelectorAll('#pgBody iframe.embed').forEach(fitEmbed),150); });
+    const tr=document.getElementById('treeRoot');
+    tr.addEventListener('dragover',e=>{ if(dragNoteId){ e.preventDefault(); } });
+    tr.addEventListener('drop',e=>{ if(dragNoteId && !e.target.closest('.tree-row.folder')){ e.preventDefault(); moveNoteToFolder(dragNoteId,''); noteDragEnd(); } });
+    document.getElementById('aiActs').addEventListener('click',e=>{ const c=e.target.closest('.ai-chip'); if(c) c.classList.toggle('on'); });
+    let dragDepth=0; const dz=document.getElementById('dropZone');
+    const hasFiles=e=>e.dataTransfer && Array.from(e.dataTransfer.types||[]).indexOf('Files')>=0;
+    const editing=()=>document.getElementById('modal').classList.contains('show')||document.getElementById('htmlImportModal').classList.contains('show');
+    window.addEventListener('dragenter',e=>{ if(editing()||!hasFiles(e)) return; e.preventDefault(); dragDepth++; dz.classList.add('show'); });
+    window.addEventListener('dragover',e=>{ if(editing()||!hasFiles(e)) return; e.preventDefault(); e.dataTransfer.dropEffect='copy'; });
+    window.addEventListener('dragleave',e=>{ if(editing()) return; dragDepth--; if(dragDepth<=0){ dragDepth=0; dz.classList.remove('show'); } });
+    window.addEventListener('drop',async e=>{ if(editing()||dragNoteId||!hasFiles(e)) return; e.preventDefault(); dragDepth=0; dz.classList.remove('show'); if(!e.dataTransfer) return; const files=await collectDropFiles(e.dataTransfer); handleDroppedFiles(files); });
     document.addEventListener('keydown',e=>{ if(e.key==='/' && document.activeElement.tagName!=='INPUT' && document.activeElement.tagName!=='TEXTAREA' && !document.getElementById('wys').contains(document.activeElement)){ e.preventDefault(); document.getElementById('search').focus(); } });
     document.addEventListener('click',e=>{ if(!e.target.closest('.searchbox')) document.getElementById('results').classList.remove('show'); });
     const ids=Object.keys(notes); if(ids.length){ open(notes['home']?'home':ids[0]); } else { renderSidebar(''); openEditor(null); }
   }
-  return { init, open, goByTitle, cur, onSearch, searchKey, openResult, showActivity, openSettings, closeSettings, setWallType, setPreset, setWallUrl, setWallImage, setBlur, setDim, resetWall, openEditor, closeEditor, switchTab, fmt, fmtBlock, wrapCode, makeLink, saveEdit, deleteCurrent, exportData, importData, toggleTheme, toggleNav };
+  return { init, open, goByTitle, cur, onSearch, searchKey, openResult, showActivity, openSettings, closeSettings, setWallType, setPreset, setWallUrl, setWallImage, setBlur, setDim, resetWall, openCropper, closeCropper, cropReset, cropWhole, applyCrop, openEditor, closeEditor, toggleEditorMax, switchTab, fmt, fmtBlock, wrapCode, makeLink, saveEdit, deleteCurrent, exportData, importData, importHtmlFile, importMarkdownFiles, openHtmlImport, closeHtmlImport, doHtmlImport, toggleTheme, toggleNav, toggleSidebar,
+    toggleFolder, collapseAll, newFolder, newNoteInFolder, renameFolder, deleteFolder, noteDragStart, noteDragEnd, folderDragOver, folderDragLeave, folderDrop,
+    openAISettings, closeAISettings, aiProviderChanged, saveAISettings, testAI, openAIOrganize, closeAIOrganize, aiAddFiles, aiRemoveAtt, runAIOrganize, aiApply };
 })();
 document.addEventListener('DOMContentLoaded', WIKI.init);
 </script>
