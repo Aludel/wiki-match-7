@@ -111,6 +111,21 @@
   article a.wlink:hover{filter:brightness(.97); box-shadow:0 0 0 3px var(--ring);}
   article a.wlink.missing{background:var(--red-soft); color:var(--red);} article a.wlink.missing::after{content:" ✚"; font-size:11px;}
   article hr{border:none; border-top:1px dashed var(--line); margin:28px 0;}
+  article s,article del{color:var(--muted); text-decoration-color:var(--faint);}
+  article img.md-img{max-width:100%; border-radius:12px; box-shadow:var(--shadow-sm); margin:10px 0; display:block;}
+  article pre.code[data-lang]::after{content:attr(data-lang); position:absolute; top:11px; right:14px; font-size:11px; color:var(--faint); text-transform:uppercase; letter-spacing:.06em; font-family:inherit;}
+  article ul.task, article ul li.task{list-style:none;}
+  article li.task{display:flex; align-items:flex-start; gap:8px; margin-left:-18px;}
+  article li.task input[type=checkbox]{margin-top:5px; width:15px; height:15px; accent-color:var(--accent); flex:0 0 15px;}
+  article .callout{margin:18px 0; border-radius:12px; border:1px solid var(--line); border-left:4px solid var(--accent); background:var(--accent-soft); overflow:hidden;}
+  article .callout-title{font-weight:740; padding:10px 16px; display:flex; align-items:center; gap:8px; color:var(--accent-ink);}
+  article .callout-title::before{content:"💡";}
+  article .callout-body{padding:2px 16px 12px; color:var(--ink-soft);}
+  article .callout-note,article .callout-info{border-left-color:#3b82f6;} article .callout-note .callout-title,article .callout-info .callout-title{color:#3b82f6;} article .callout-note .callout-title::before,article .callout-info .callout-title::before{content:"ℹ️";}
+  article .callout-tip,article .callout-hint,article .callout-success{border-left-color:var(--green);} article .callout-tip .callout-title,article .callout-success .callout-title{color:var(--green);} article .callout-tip .callout-title::before,article .callout-success .callout-title::before{content:"✅";}
+  article .callout-warning,article .callout-caution{border-left-color:#f59e0b;} article .callout-warning .callout-title{color:#d97706;} article .callout-warning .callout-title::before,article .callout-caution .callout-title::before{content:"⚠️";}
+  article .callout-danger,article .callout-error,article .callout-bug{border-left-color:var(--red);} article .callout-danger .callout-title,article .callout-error .callout-title{color:var(--red);} article .callout-danger .callout-title::before,article .callout-error .callout-title::before{content:"🛑";}
+  article .callout-quote{border-left-color:var(--muted);} article .callout-quote .callout-title::before{content:"❝";}
   article table{border-collapse:separate; border-spacing:0; width:100%; margin:18px 0; font-size:14px; border:1px solid var(--line); border-radius:12px; overflow:hidden; box-shadow:var(--shadow-sm);}
   article th{background:var(--accent-soft); color:var(--accent-ink); padding:10px 14px; text-align:left; font-weight:700; border-bottom:1px solid var(--line);}
   article td{padding:9px 14px; border-bottom:1px solid var(--line-soft);}
@@ -230,6 +245,10 @@
   .ai-chip{font-size:13px; padding:7px 12px; border-radius:9px; border:1px solid var(--line); background:var(--panel-2); color:var(--ink-soft); cursor:pointer;}
   .ai-chip.on{background:var(--accent-soft); color:var(--accent-ink); border-color:color-mix(in srgb,var(--accent) 30%,transparent); font-weight:650;}
   .ai-out{white-space:pre-wrap; background:var(--panel-soft); border:1px solid var(--line); border-radius:10px; padding:12px 14px; font-size:13.5px; max-height:40vh; overflow:auto; line-height:1.7;}
+  .ai-drop{border:2px dashed var(--line); border-radius:12px; padding:12px 14px; transition:.15s;}
+  #aiOrganizeModal.dragging .ai-drop{border-color:var(--accent); background:var(--accent-soft); box-shadow:0 0 0 3px var(--ring);}
+  .ai-drophint{font-size:12.5px; color:var(--faint); margin:8px 2px 0;}
+  #aiOrganizeModal.dragging .ai-drophint{color:var(--accent-ink); font-weight:650;}
   .ai-atts{display:flex; flex-wrap:wrap; gap:8px; margin-top:8px;}
   .ai-att{display:flex; align-items:center; gap:6px; font-size:12px; background:var(--panel-soft); border:1px solid var(--line); border-radius:8px; padding:4px 8px;}
   .ai-att button{border:none; background:none; color:var(--red); cursor:pointer; font-size:13px;}
@@ -340,6 +359,8 @@
     <div class="toolbar" id="toolbar">
       <button title="加粗" onclick="WIKI.fmt('bold')"><b>B</b></button>
       <button title="斜体" onclick="WIKI.fmt('italic')"><i>I</i></button>
+      <button title="删除线" onclick="WIKI.fmt('strikeThrough')"><s>S</s></button>
+      <button title="高亮" onclick="WIKI.wrapMark()">＝高亮</button>
       <button title="标题2" onclick="WIKI.fmtBlock('H2')">H2</button>
       <button title="标题3" onclick="WIKI.fmtBlock('H3')">H3</button>
       <button title="标题4" onclick="WIKI.fmtBlock('H4')">H4</button>
@@ -350,6 +371,8 @@
       <button title="有序列表" onclick="WIKI.fmt('insertOrderedList')">1. 列表</button>
       <button title="引用" onclick="WIKI.fmtBlock('BLOCKQUOTE')">❝ 引用</button>
       <button title="行内代码" onclick="WIKI.wrapCode()">&lt;/&gt; 代码</button>
+      <button title="代码块" onclick="WIKI.insertCodeBlock()">⌗ 代码块</button>
+      <button title="任务列表" onclick="WIKI.insertTask()">☑ 任务</button>
       <button title="链接" onclick="WIKI.makeLink()">🔗 链接</button>
       <button title="粘贴 HTML 转为笔记内容" onclick="WIKI.openHtmlImport()">⤵ HTML</button>
     </div>
@@ -415,10 +438,14 @@
         <span class="ai-chip" data-act="categorize">建议分类文件夹</span>
         <span class="ai-chip" data-act="format">格式整理 / 纠错</span>
       </div></div>
+      <div class="ai-field"><label>常用指令 / Skills <button class="side-mini" style="margin-left:6px" onclick="WIKI.saveAIPreset()">＋ 存当前</button></label><div class="ai-acts" id="aiPresets"></div></div>
       <div class="ai-field"><label>补充指令（可选）</label><textarea id="aiInstruct" style="min-height:60px" placeholder="例如：用更口语化的语气、补充一个例子、翻译成英文…"></textarea></div>
-      <div class="ai-field"><label>附带图片 / PDF（可选，用于从素材整理笔记）</label>
-        <input id="aiFiles" type="file" accept="image/*,.pdf" multiple onchange="WIKI.aiAddFiles(this.files); this.value='';">
-        <div class="ai-atts" id="aiAtts"></div>
+      <div class="ai-field"><label>附带图片 / PDF（可选，可拖拽到此面板任意处）</label>
+        <div id="aiDrop" class="ai-drop">
+          <input id="aiFiles" type="file" accept="image/*,.pdf" multiple onchange="WIKI.aiAddFiles(this.files); this.value='';">
+          <div class="ai-drophint">⬇ 把多个图片 / PDF 拖到这里，作为整理素材</div>
+          <div class="ai-atts" id="aiAtts"></div>
+        </div>
       </div>
       <div class="ai-field" id="aiOutWrap" style="display:none"><label>AI 结果 <span class="ai-status" id="aiRunStatus"></span></label><div class="ai-out" id="aiOut"></div></div>
     </div>
@@ -451,32 +478,49 @@ const WIKI=(function(){
     return parts.map(seg=>{
       if(seg.length>=2 && seg[0]===BT && seg[seg.length-1]===BT){ return '<code class="inline">'+esc(seg.slice(1,-1))+'</code>'; }
       let t=esc(seg);
-      t=t.replace(/\[\[([^\]]+)\]\]/g,(m,x)=>{ x=x.trim(); const ex=idByTitle(x); return '<a class="wlink'+(ex?'':' missing')+'" data-t="'+x.replace(/"/g,'&quot;')+'" onclick="WIKI.goByTitle(this.dataset.t);return false;">'+x+'</a>'; });
+      t=t.replace(/!\[([^\]]*)\]\(([^)]+)\)/g,(m,alt,src)=>'<img class="md-img" src="'+src.trim().replace(/"/g,'&quot;')+'" alt="'+alt.replace(/"/g,'&quot;')+'">');
+      t=t.replace(/\[\[([^\]]+)\]\]/g,(m,x)=>{ x=x.trim(); let target=x,label=x; const bar=x.indexOf('|'); if(bar>=0){ target=x.slice(0,bar).trim(); label=x.slice(bar+1).trim(); } const ex=idByTitle(target); return '<a class="wlink'+(ex?'':' missing')+'" data-t="'+target.replace(/"/g,'&quot;')+'" onclick="WIKI.goByTitle(this.dataset.t);return false;">'+label+'</a>'; });
       t=t.replace(/\[([^\]]+)\]\(([^)]+)\)/g,(m,txt,url)=>'<a href="'+url+'" target="_blank" rel="noopener">'+txt+'</a>');
       t=t.replace(/\*\*([^*]+)\*\*/g,'<b>$1</b>');
-      t=t.replace(/(^|[^*])\*([^*]+)\*/g,'$1<i>$2</i>');
+      t=t.replace(/__([^_]+)__/g,'<b>$1</b>');
+      t=t.replace(/~~([^~]+)~~/g,'<s>$1</s>');
+      t=t.replace(/==([^=]+)==/g,'<mark>$1</mark>');
+      t=t.replace(/(^|[^*])\*([^*\s][^*]*?)\*/g,'$1<i>$2</i>');
+      t=t.replace(/(^|[^_\w])_([^_\s][^_]*?)_(?![\w])/g,'$1<i>$2</i>');
       return t;
     }).join('');
   }
+  function buildListTree(items){ const root=[]; const stack=[{indent:-1,children:root}];
+    items.forEach(it=>{ while(stack.length>1 && it.indent<=stack[stack.length-1].indent) stack.pop(); const parent=stack[stack.length-1]; const node={ordered:it.ordered,task:it.task,text:it.text,children:[]}; parent.children.push(node); stack.push({indent:it.indent,children:node.children}); }); return root; }
+  function renderListTree(nodes){ if(!nodes.length) return ''; const anyTask=nodes.some(n=>n.task!=null); const tag=nodes[0].ordered?'ol':'ul';
+    let h='<'+tag+(anyTask?' class="task"':'')+'>';
+    nodes.forEach(n=>{ h+='<li'+(n.task!=null?' class="task"':'')+'>'+(n.task!=null?('<input type="checkbox" disabled'+(n.task?' checked':'')+'/>'):'')+'<span>'+n.text+'</span>'+renderListTree(n.children)+'</li>'; });
+    return h+'</'+tag+'>'; }
   function render(md){
     const lines=(md||'').replace(/\r/g,'').split('\n'); const FENCE=String.fromCharCode(96,96,96);
     let html='', i=0;
     const isTableStart=k=>/\|/.test(lines[k]||'') && /^[\s|:\-]+$/.test(lines[k+1]||'') && (lines[k+1]||'').includes('-');
     while(i<lines.length){
       let ln=lines[i];
-      if(ln.indexOf(FENCE)===0){ let buf=[]; i++; while(i<lines.length && lines[i].indexOf(FENCE)!==0){ buf.push(lines[i]); i++; } i++; html+='<pre class="code">'+esc(buf.join('\n'))+'</pre>'; continue; }
+      if(ln.indexOf(FENCE)===0){ const lang=ln.slice(3).trim(); let buf=[]; i++; while(i<lines.length && lines[i].indexOf(FENCE)!==0){ buf.push(lines[i]); i++; } i++; html+='<pre class="code"'+(lang?' data-lang="'+esc(lang)+'"':'')+'>'+esc(buf.join('\n'))+'</pre>'; continue; }
       if(/^@embed\s+/.test(ln)){ const src=ln.replace(/^@embed\s+/,'').trim(); html+='<iframe class="embed" src="'+src.replace(/"/g,'%22')+'" loading="lazy"></iframe>'; i++; continue; }
       if(/^@embedhtml\s+/.test(ln)){ const b64=ln.replace(/^@embedhtml\s+/,'').trim(); let doc=''; try{ doc=decodeURIComponent(escape(atob(b64))); }catch(e){ doc=''; } doc+='<style id="__wikiBgKill">:root,html,body{background:transparent !important;background-color:transparent !important;}</style>'; html+='<iframe class="embed" srcdoc="'+doc.replace(/&/g,'&amp;').replace(/"/g,'&quot;')+'" sandbox="allow-scripts allow-same-origin allow-popups" loading="lazy"></iframe>'; i++; continue; }
       let h=ln.match(/^(#{1,6})\s+(.*)$/);
       if(h){ const lv=h[1].length; html+='<h'+lv+'>'+inline(h[2])+'</h'+lv+'>'; i++; continue; }
       if(/^---+$/.test(ln.trim())){ html+='<hr>'; i++; continue; }
-      if(/^>\s?/.test(ln)){ let buf=[]; while(i<lines.length && /^>\s?/.test(lines[i])){ buf.push(lines[i].replace(/^>\s?/,'')); i++; } html+='<blockquote>'+inline(buf.join(' '))+'</blockquote>'; continue; }
+      if(/^>\s?/.test(ln)){ let buf=[]; while(i<lines.length && /^>\s?/.test(lines[i])){ buf.push(lines[i].replace(/^>\s?/,'')); i++; }
+        const cm=buf[0] && buf[0].match(/^\[!(\w+)\]([+-])?\s*(.*)$/);
+        if(cm){ const type=cm[1].toLowerCase(); const title=(cm[3]||'').trim()||cm[1]; const body=buf.slice(1).filter(x=>x.trim()!=='');
+          html+='<div class="callout callout-'+esc(type)+'"><div class="callout-title">'+inline(title)+'</div>'+(body.length?'<div class="callout-body">'+inline(body.join(' '))+'</div>':'')+'</div>'; }
+        else html+='<blockquote>'+inline(buf.join(' '))+'</blockquote>';
+        continue; }
       if(isTableStart(i)){ const head=ln.split('|').map(x=>x.trim()).filter(x=>x!==''); i+=2; let rows=[]; while(i<lines.length && lines[i].includes('|')){ rows.push(lines[i].split('|').map(x=>x.trim()).filter(x=>x!=='')); i++; } let t='<table><thead><tr>'+head.map(c=>'<th>'+inline(c)+'</th>').join('')+'</tr></thead><tbody>'; rows.forEach(r=>{ t+='<tr>'+r.map(c=>'<td>'+inline(c)+'</td>').join('')+'</tr>'; }); html+=t+'</tbody></table>'; continue; }
-      if(/^\s*[-*]\s+/.test(ln)){ let buf=[]; while(i<lines.length && /^\s*[-*]\s+/.test(lines[i])){ buf.push(lines[i].replace(/^\s*[-*]\s+/,'')); i++; } html+='<ul>'+buf.map(b=>'<li>'+inline(b)+'</li>').join('')+'</ul>'; continue; }
-      if(/^\s*\d+\.\s+/.test(ln)){ let buf=[]; while(i<lines.length && /^\s*\d+\.\s+/.test(lines[i])){ buf.push(lines[i].replace(/^\s*\d+\.\s+/,'')); i++; } html+='<ol>'+buf.map(b=>'<li>'+inline(b)+'</li>').join('')+'</ol>'; continue; }
+      if(/^\s*([-*+]|\d+\.)\s+/.test(lines[i])){ const items=[];
+        while(i<lines.length && /^\s*([-*+]|\d+\.)\s+/.test(lines[i])){ const m=lines[i].match(/^(\s*)([-*+]|\d+\.)\s+(.*)$/); const indent=m[1].replace(/\t/g,'    ').length; const ordered=/\d+\./.test(m[2]); let text=m[3], task=null; const tm=text.match(/^\[([ xX])\]\s+(.*)$/); if(tm){ task=/[xX]/.test(tm[1]); text=tm[2]; } items.push({indent,ordered,task,text:inline(text)}); i++; }
+        html+=renderListTree(buildListTree(items)); continue; }
       if(ln.trim()===''){ i++; continue; }
       let buf=[ln]; i++;
-      while(i<lines.length && lines[i].trim()!=='' && !/^(#{1,6}\s|>|\s*[-*]\s|\s*\d+\.\s|---+$)/.test(lines[i]) && lines[i].indexOf(FENCE)!==0 && !isTableStart(i)){ buf.push(lines[i]); i++; }
+      while(i<lines.length && lines[i].trim()!=='' && !/^(#{1,6}\s|>|\s*([-*+]|\d+\.)\s|---+$)/.test(lines[i]) && lines[i].indexOf(FENCE)!==0 && !isTableStart(i)){ buf.push(lines[i]); i++; }
       html+='<p>'+buf.map(inline).join('<br>')+'</p>';
     }
     return html;
@@ -484,12 +528,14 @@ const WIKI=(function(){
   function htmlToMd(root){
     function inlineMd(node){ let s=''; node.childNodes.forEach(n=>{ if(n.nodeType===3){ s+=n.nodeValue; return; } if(n.nodeType!==1) return; const tag=n.nodeName.toLowerCase(), inner=inlineMd(n);
       if(tag==='b'||tag==='strong') s+='**'+inner+'**'; else if(tag==='i'||tag==='em') s+='*'+inner+'*';
-      else if(tag==='code') s+=String.fromCharCode(96)+n.textContent+String.fromCharCode(96);
+      else if(tag==='s'||tag==='del'||tag==='strike') s+='~~'+inner+'~~'; else if(tag==='mark') s+='=='+inner+'==';
+      else if(tag==='img') s+='!['+(n.getAttribute('alt')||'')+']('+(n.getAttribute('src')||'')+')';
+      else if(tag==='input') { } else if(tag==='code') s+=String.fromCharCode(96)+n.textContent+String.fromCharCode(96);
       else if(tag==='a') s+='['+inner+']('+(n.getAttribute('href')||'')+')'; else if(tag==='br') s+='\n'; else s+=inner; }); return s; }
     let out='';
     function block(node){ node.childNodes.forEach(n=>{ if(n.nodeType===3){ const t=n.nodeValue.replace(/\s+/g,' ').trim(); if(t) out+=t+'\n\n'; return; } if(n.nodeType!==1) return; const tag=n.nodeName.toLowerCase();
       if(/^h[1-6]$/.test(tag)) out+='#'.repeat(+tag[1])+' '+inlineMd(n).trim()+'\n\n';
-      else if(tag==='ul'){ n.querySelectorAll(':scope > li').forEach(li=>{ out+='- '+inlineMd(li).trim()+'\n'; }); out+='\n'; }
+      else if(tag==='ul'){ n.querySelectorAll(':scope > li').forEach(li=>{ const cb=li.querySelector(':scope > input[type=checkbox]'); const mark=cb?('- ['+(cb.checked?'x':' ')+'] '):'- '; out+=mark+inlineMd(li).trim()+'\n'; }); out+='\n'; }
       else if(tag==='ol'){ let k=1; n.querySelectorAll(':scope > li').forEach(li=>{ out+=(k++)+'. '+inlineMd(li).trim()+'\n'; }); out+='\n'; }
       else if(tag==='blockquote'){ out+='> '+inlineMd(n).trim().replace(/\n+/g,' ')+'\n\n'; }
       else if(tag==='pre'){ const F=String.fromCharCode(96,96,96); out+=F+'\n'+n.textContent.replace(/\n+$/,'')+'\n'+F+'\n\n'; }
@@ -546,7 +592,7 @@ const WIKI=(function(){
       Object.values(node.children).sort((a,b)=>a.name.localeCompare(b.name,'zh')).forEach(fd=>{ if(filterFn&&countNotes(fd)===0) return; const isCol=!f&&col[fd.path]; const ep=jsesc(fd.path);
         out+='<div class="tree-row folder'+(isCol?' collapsed':'')+'" data-folder="'+escAttr(fd.path)+'" style="padding-left:'+pad+'px" onclick="WIKI.toggleFolder(\''+ep+'\')" ondragover="WIKI.folderDragOver(event)" ondragleave="WIKI.folderDragLeave(event)" ondrop="WIKI.folderDrop(event,\''+ep+'\')">'
           +'<span class="caret">▾</span><span>📁</span><span class="tlabel">'+escAttr(fd.name)+'</span><span class="tcount">'+countNotes(fd)+'</span>'
-          +'<span class="tacts"><button title="在此新建笔记" onclick="event.stopPropagation();WIKI.newNoteInFolder(\''+ep+'\')">＋</button><button title="重命名" onclick="event.stopPropagation();WIKI.renameFolder(\''+ep+'\')">✎</button><button title="删除" onclick="event.stopPropagation();WIKI.deleteFolder(\''+ep+'\')">🗑</button></span></div>';
+          +'<span class="tacts"><button title="新建子文件夹" onclick="event.stopPropagation();WIKI.newSubFolder(\''+ep+'\')">📁＋</button><button title="在此新建笔记" onclick="event.stopPropagation();WIKI.newNoteInFolder(\''+ep+'\')">📄＋</button><button title="重命名" onclick="event.stopPropagation();WIKI.renameFolder(\''+ep+'\')">✎</button><button title="删除" onclick="event.stopPropagation();WIKI.deleteFolder(\''+ep+'\')">🗑</button></span></div>';
         out+='<div class="tree-children'+(isCol?' hidden':'')+'">'+nodeHTML(fd,depth+1)+'</div>'; });
       node.notes.sort((a,b)=>a.title.localeCompare(b.title,'zh')).forEach(n=>{
         out+='<div class="tree-row note'+(n.id===current&&view==='note'?' active':'')+'" draggable="true" data-note="'+n.id+'" style="padding-left:'+(pad+14)+'px" onclick="WIKI.open(\''+n.id+'\')" ondragstart="WIKI.noteDragStart(event,\''+n.id+'\')" ondragend="WIKI.noteDragEnd()"><span class="dot"></span><span class="tlabel">'+escAttr(n.title)+'</span></div>'; });
@@ -556,6 +602,7 @@ const WIKI=(function(){
   function toggleFolder(path){ const col=getCollapsed(); col[path]=!col[path]; if(!col[path]) delete col[path]; saveCollapsed(col); renderSidebar(searchVal()); }
   function collapseAll(c){ const col={}; if(c) allFolderPaths().forEach(p=>col[p]=true); saveCollapsed(col); renderSidebar(searchVal()); }
   function newFolder(){ const name=prompt('新建文件夹（可用 / 建立多级，如  操作系统/并发）：',''); if(name==null) return; const path=name.split('/').map(s=>s.trim()).filter(Boolean).join('/'); if(!path) return; const fs=getFolders(); fs.push(path); saveFolders(fs); const col=getCollapsed(); delete col[path]; saveCollapsed(col); renderSidebar(searchVal()); toast('已创建文件夹「'+path+'」'); }
+  function newSubFolder(parent){ const name=prompt('在「'+parent+'」中新建子文件夹（可用 / 建多级）：',''); if(name==null) return; const seg=name.split('/').map(s=>s.trim()).filter(Boolean).join('/'); if(!seg) return; const path=parent+'/'+seg; const fs=getFolders(); fs.push(path); saveFolders(fs); const col=getCollapsed(); delete col[parent]; delete col[path]; saveCollapsed(col); renderSidebar(searchVal()); toast('已创建「'+path+'」'); }
   function newNoteInFolder(path){ openEditor(null); document.getElementById('edCat').value=path; }
   function renameFolder(path){ const parts=path.split('/'); const cur=parts[parts.length-1]; const nn=prompt('重命名文件夹（仅改这一级名称）：',cur); if(nn==null) return; const name=nn.trim(); if(!name||name===cur) return; parts[parts.length-1]=name; reassignPrefix(path,parts.join('/')); toast('已重命名为「'+name+'」'); }
   function deleteFolder(path){ const parent=path.split('/').slice(0,-1).join('/'); if(!confirm('删除文件夹「'+path+'」？\n其中的笔记与子文件夹会移动到上一级（不会删除笔记）。')) return; reassignPrefix(path,parent); saveFolders(getFolders().filter(p=>p!==path)); toast('已删除文件夹'); }
@@ -683,6 +730,9 @@ const WIKI=(function(){
   function fmt(cmd){ document.execCommand(cmd,false,null); document.getElementById('wys').focus(); }
   function fmtBlock(tag){ document.execCommand('formatBlock',false,tag); document.getElementById('wys').focus(); }
   function wrapCode(){ const s=window.getSelection(); if(!s.rangeCount||s.isCollapsed){ document.execCommand('insertHTML',false,'<code>代码</code>'); return; } document.execCommand('insertHTML',false,'<code>'+s.toString().replace(/&/g,'&amp;').replace(/</g,'&lt;')+'</code>'); }
+  function wrapMark(){ const s=window.getSelection(); const txt=(s&&!s.isCollapsed)?s.toString():'高亮文本'; document.execCommand('insertHTML',false,'<mark>'+txt.replace(/&/g,'&amp;').replace(/</g,'&lt;')+'</mark>'); document.getElementById('wys').focus(); }
+  function insertCodeBlock(){ const s=window.getSelection(); const txt=(s&&!s.isCollapsed)?s.toString():'在此输入代码'; document.execCommand('insertHTML',false,'<pre>'+txt.replace(/&/g,'&amp;').replace(/</g,'&lt;')+'</pre><p><br></p>'); document.getElementById('wys').focus(); }
+  function insertTask(){ document.execCommand('insertHTML',false,'<ul><li class="task"><input type="checkbox"/> 待办事项</li></ul>'); document.getElementById('wys').focus(); }
   function makeLink(){ const url=prompt('链接地址（站内笔记请直接在正文用 [[标题]]）：','https://'); if(url) document.execCommand('createLink',false,url); }
   function saveEdit(){ const title=document.getElementById('edTitle').value.trim(); if(!title){ toast('请填写标题'); return; }
     const cat=document.getElementById('edCat').value.trim()||'未分类'; const body=currentMd(); const now=new Date().toISOString().slice(0,16).replace('T',' '); let id=editingId;
@@ -766,8 +816,32 @@ const WIKI=(function(){
       if(!res.ok) throw new Error('HTTP '+res.status+'：'+(await res.text()).slice(0,240));
       const j=await res.json(); return ((j.choices&&j.choices[0]&&j.choices[0].message&&j.choices[0].message.content)||'').trim(); } }
 
+  const AIPRESET_KEY='wikiAIPresets';
+  const BUILTIN_PRESETS=[
+    {name:'翻译成英文',text:'把整篇笔记翻译成地道的英文，保留 Markdown 结构。'},
+    {name:'提炼要点',text:'用简洁的无序列表提炼本笔记的核心要点。'},
+    {name:'转为表格',text:'把适合结构化的内容整理成 Markdown 表格。'},
+    {name:'出练习题',text:'基于笔记内容出 5 道练习题，并在最后附上参考答案。'},
+    {name:'通俗讲解',text:'用通俗易懂、面向初学者的语气重写，并补充一个生活化的类比。'},
+    {name:'补全大纲',text:'根据现有内容补全为一份结构完整的学习大纲。'}
+  ];
+  function getAIPresets(){ try{ return JSON.parse(localStorage.getItem(AIPRESET_KEY)||'[]'); }catch(e){ return []; } }
+  function saveAIPresetsArr(a){ try{ localStorage.setItem(AIPRESET_KEY,JSON.stringify(a)); }catch(e){} }
+  function isSkillCat(c){ return (c||'').split('/').some(seg=>/^(skill|skills|指令|提示词|prompt|prompts)$/i.test(seg.trim())); }
+  function skillNotes(){ return Object.values(notes).filter(n=>isSkillCat(n.category)).sort((a,b)=>a.title.localeCompare(b.title,'zh')); }
+  function tattr(s){ return escAttr(s).replace(/"/g,'&quot;'); }
+  function renderAIPresets(){ const host=document.getElementById('aiPresets'); let chips='';
+    BUILTIN_PRESETS.forEach((p,i)=>chips+='<span class="ai-chip" title="'+tattr(p.text)+'" onclick="WIKI.useAIPreset(\'b\','+i+')">'+escAttr(p.name)+'</span>');
+    getAIPresets().forEach((p,i)=>chips+='<span class="ai-chip" title="'+tattr(p.text)+'" onclick="WIKI.useAIPreset(\'u\','+i+')">'+escAttr(p.name)+' <b style="color:var(--red)" onclick="event.stopPropagation();WIKI.delAIPreset('+i+')">✕</b></span>');
+    skillNotes().forEach(n=>chips+='<span class="ai-chip" title="引用 wiki 中的 skill 笔记作为指令" onclick="WIKI.useSkill(\''+n.id+'\')">🛠 '+escAttr(n.title)+'</span>');
+    host.innerHTML=chips||'<span class="ai-status">暂无常用指令。可在下方写好指令后点「＋ 存当前」保存；或把笔记放进名为 Skills / 指令 / 提示词 的文件夹，它们会作为可复用 skill 出现在这里。</span>'; }
+  function appendInstruct(text){ const ta=document.getElementById('aiInstruct'); ta.value=(ta.value.trim()?ta.value.replace(/\s+$/,'')+'\n':'')+text; ta.focus(); }
+  function useAIPreset(kind,i){ const p=kind==='b'?BUILTIN_PRESETS[i]:getAIPresets()[i]; if(p) appendInstruct(p.text); }
+  function useSkill(id){ const n=notes[id]; if(n) appendInstruct('【参考 skill「'+n.title+'」的指令】\n'+(n.body||'').trim()); }
+  function saveAIPreset(){ const text=document.getElementById('aiInstruct').value.trim(); if(!text){ toast('请先在补充指令里写点内容'); return; } const name=prompt('给这条常用指令起个名字：',text.slice(0,16)); if(name==null) return; const arr=getAIPresets(); arr.push({name:(name.trim()||text.slice(0,12)),text}); saveAIPresetsArr(arr); renderAIPresets(); toast('✓ 已保存常用指令'); }
+  function delAIPreset(i){ const arr=getAIPresets(); arr.splice(i,1); saveAIPresetsArr(arr); renderAIPresets(); }
   let aiAttachments=[], aiLastBody='', aiSuggestedCat=null;
-  function openAIOrganize(){ if(!current||!notes[current]){ toast('请先打开一篇笔记'); return; } aiAttachments=[]; aiLastBody=''; aiSuggestedCat=null; renderAiAtts();
+  function openAIOrganize(){ if(!current||!notes[current]){ toast('请先打开一篇笔记'); return; } aiAttachments=[]; aiLastBody=''; aiSuggestedCat=null; renderAiAtts(); renderAIPresets();
     document.getElementById('aiCurNote').textContent='当前：'+notes[current].title; document.getElementById('aiOut').textContent=''; document.getElementById('aiOutWrap').style.display='none'; document.getElementById('aiRunStatus').textContent='';
     ['aiApplyReplace','aiApplyPrepend','aiApplyCat'].forEach(id=>document.getElementById(id).style.display='none'); document.getElementById('aiOrganizeModal').classList.add('show'); }
   function closeAIOrganize(){ document.getElementById('aiOrganizeModal').classList.remove('show'); }
@@ -842,7 +916,11 @@ const WIKI=(function(){
     document.getElementById('aiActs').addEventListener('click',e=>{ const c=e.target.closest('.ai-chip'); if(c) c.classList.toggle('on'); });
     let dragDepth=0; const dz=document.getElementById('dropZone');
     const hasFiles=e=>e.dataTransfer && Array.from(e.dataTransfer.types||[]).indexOf('Files')>=0;
-    const editing=()=>document.getElementById('modal').classList.contains('show')||document.getElementById('htmlImportModal').classList.contains('show');
+    const editing=()=>['modal','htmlImportModal','aiOrganizeModal','aiSettingsModal'].some(id=>document.getElementById(id).classList.contains('show'));
+    const aiM=document.getElementById('aiOrganizeModal');
+    aiM.addEventListener('dragover',e=>{ if(!aiM.classList.contains('show')||!hasFiles(e)) return; e.preventDefault(); e.stopPropagation(); aiM.classList.add('dragging'); e.dataTransfer.dropEffect='copy'; });
+    aiM.addEventListener('dragleave',e=>{ if(!aiM.contains(e.relatedTarget)) aiM.classList.remove('dragging'); });
+    aiM.addEventListener('drop',async e=>{ if(!aiM.classList.contains('show')||!hasFiles(e)) return; e.preventDefault(); e.stopPropagation(); aiM.classList.remove('dragging'); const files=await collectDropFiles(e.dataTransfer); const ok=Array.from(files).filter(f=>/^image\//.test(f.type)||f.type==='application/pdf'||/\.(png|jpe?g|gif|webp|bmp|svg|pdf)$/i.test(f.name)); if(ok.length){ aiAddFiles(ok); toast('已添加 '+ok.length+' 个素材'); } else toast('请拖入图片或 PDF 文件'); });
     window.addEventListener('dragenter',e=>{ if(editing()||!hasFiles(e)) return; e.preventDefault(); dragDepth++; dz.classList.add('show'); });
     window.addEventListener('dragover',e=>{ if(editing()||!hasFiles(e)) return; e.preventDefault(); e.dataTransfer.dropEffect='copy'; });
     window.addEventListener('dragleave',e=>{ if(editing()) return; dragDepth--; if(dragDepth<=0){ dragDepth=0; dz.classList.remove('show'); } });
@@ -851,9 +929,9 @@ const WIKI=(function(){
     document.addEventListener('click',e=>{ if(!e.target.closest('.searchbox')) document.getElementById('results').classList.remove('show'); });
     const ids=Object.keys(notes); if(ids.length){ open(notes['home']?'home':ids[0]); } else { renderSidebar(''); openEditor(null); }
   }
-  return { init, open, goByTitle, cur, onSearch, searchKey, openResult, showActivity, openSettings, closeSettings, setWallType, setPreset, setWallUrl, setWallImage, setBlur, setDim, resetWall, openCropper, closeCropper, cropReset, cropWhole, applyCrop, openEditor, closeEditor, toggleEditorMax, switchTab, fmt, fmtBlock, wrapCode, makeLink, saveEdit, deleteCurrent, exportData, importData, importHtmlFile, importMarkdownFiles, openHtmlImport, closeHtmlImport, doHtmlImport, toggleTheme, toggleNav, toggleSidebar,
-    toggleFolder, collapseAll, newFolder, newNoteInFolder, renameFolder, deleteFolder, noteDragStart, noteDragEnd, folderDragOver, folderDragLeave, folderDrop,
-    openAISettings, closeAISettings, aiProviderChanged, saveAISettings, testAI, openAIOrganize, closeAIOrganize, aiAddFiles, aiRemoveAtt, runAIOrganize, aiApply };
+  return { init, open, goByTitle, cur, onSearch, searchKey, openResult, showActivity, openSettings, closeSettings, setWallType, setPreset, setWallUrl, setWallImage, setBlur, setDim, resetWall, openCropper, closeCropper, cropReset, cropWhole, applyCrop, openEditor, closeEditor, toggleEditorMax, switchTab, fmt, fmtBlock, wrapCode, wrapMark, insertCodeBlock, insertTask, makeLink, saveEdit, deleteCurrent, exportData, importData, importHtmlFile, importMarkdownFiles, openHtmlImport, closeHtmlImport, doHtmlImport, toggleTheme, toggleNav, toggleSidebar,
+    toggleFolder, collapseAll, newFolder, newSubFolder, newNoteInFolder, renameFolder, deleteFolder, noteDragStart, noteDragEnd, folderDragOver, folderDragLeave, folderDrop,
+    openAISettings, closeAISettings, aiProviderChanged, saveAISettings, testAI, openAIOrganize, closeAIOrganize, aiAddFiles, aiRemoveAtt, runAIOrganize, aiApply, useAIPreset, useSkill, saveAIPreset, delAIPreset };
 })();
 document.addEventListener('DOMContentLoaded', WIKI.init);
 </script>
